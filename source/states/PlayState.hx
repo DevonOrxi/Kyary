@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.util.FlxColor;
+import managers.TimeMaster;
 
 
 /**
@@ -11,20 +12,8 @@ import flixel.util.FlxColor;
  */
 class PlayState extends FlxState
 {	
-	private var square:FlxSprite;
-	
-	private var bpm:Float = 165;
-	
-	private var barTime:Float;
-	private var currentBar:Int = 0;
-	private var songBar:Float;	
-	private var barProgress:Float = 0;
-	
-	private var timeSignature = 4;
-	
-	private var isBeat = true;
-	private var beatTime:Float;
-	private var currentBeat:Int = 1;
+	private var square:FlxSprite;	
+	private var timeMaster:TimeMaster;
 	
 	
 	override public function create():Void
@@ -34,12 +23,12 @@ class PlayState extends FlxState
 		square = new FlxSprite(100, 100);
 		square.makeGraphic(72, 72);
 		square.color = FlxColor.RED;
-		add(square);		
+		add(square);
+		
+		timeMaster = new TimeMaster();
+		add(timeMaster);
 		
 		FlxG.sound.playMusic(AssetPaths.music__mp3);
-		
-		beatTime = 1 / (bpm / 60);
-		barTime = timeSignature * beatTime;
 		
 		//trace(currentBar + "." + currentBeat);
 	}
@@ -49,31 +38,13 @@ class PlayState extends FlxState
 	{
 		super.update();
 		
-		
-		songBar = FlxG.sound.music.time / (1000 * barTime);
-		barProgress = songBar - Math.ffloor(songBar);
-		
-		
-		if (currentBar < Math.floor(songBar))
-		{
-			currentBeat = 1;
-			currentBar++;
+		if (timeMaster.getIsBeat())
 			changeFlasheo();
-			//trace(currentBar + "." + currentBeat);
-		}
-		
-		
-		if (!(barProgress < (currentBeat/timeSignature)))
-		{
-			currentBeat++;
-			changeFlasheo();
-			//trace(currentBar + "." + currentBeat);
-		}
 	}
 	
 	private function changeFlasheo():Void
 	{
-		switch(currentBeat)
+		switch(timeMaster.getCurrentBeat())
 		{
 			case 1:
 				square.y = 100;

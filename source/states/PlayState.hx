@@ -16,8 +16,9 @@ class PlayState extends FlxState
 	private var bpm:Float = 165;
 	
 	private var barTime:Float;
-	private var songBar:Float = 1;	
-	private var counterBar:Int = 1;
+	private var currentBar:Int = 0;
+	private var songBar:Float;	
+	private var barProgress:Float = 0;
 	
 	private var timeSignature = 4;
 	
@@ -32,6 +33,7 @@ class PlayState extends FlxState
 		
 		square = new FlxSprite(100, 100);
 		square.makeGraphic(72, 72);
+		square.color = FlxColor.RED;
 		add(square);		
 		
 		FlxG.sound.playMusic(AssetPaths.music__mp3);
@@ -39,36 +41,52 @@ class PlayState extends FlxState
 		beatTime = 1 / (bpm / 60);
 		barTime = timeSignature * beatTime;
 		
-		trace(currentBeat);
+		//trace(currentBar + "." + currentBeat);
 	}
 	
 	
 	override public function update():Void
 	{
 		super.update();
-		/*
-		if (isBeat)
-			if (square.x == 100)
-				square.x = 300;
-			else
-				square.x = 100;
-		*/
-		songBar = FlxG.sound.music.time / (1000 * barTime);
 		
-		if ((songBar - Math.ffloor(songBar)) > (currentBeat/timeSignature))
+		
+		songBar = FlxG.sound.music.time / (1000 * barTime);
+		barProgress = songBar - Math.ffloor(songBar);
+		
+		
+		if (currentBar < Math.floor(songBar))
 		{
-			//isBeat = true;
-			//counter = 0;
+			currentBeat = 1;
+			currentBar++;
+			changeFlasheo();
+			//trace(currentBar + "." + currentBeat);
+		}
+		
+		
+		if (!(barProgress < (currentBeat/timeSignature)))
+		{
 			currentBeat++;
-			if (currentBeat > timeSignature)
-			{
-				currentBeat = 1;
-				counterBar++;
-			}
-				
-			//trace(currentBeat);
-		}/*
-		else
-			isBeat = false;*/
-	}	
+			changeFlasheo();
+			//trace(currentBar + "." + currentBeat);
+		}
+	}
+	
+	private function changeFlasheo():Void
+	{
+		switch(currentBeat)
+		{
+			case 1:
+				square.y = 100;
+				square.color = FlxColor.RED;
+			case 2:
+				square.x = 300;
+				square.color = FlxColor.BLUE;
+			case 3:
+				square.y = 300;
+				square.color = FlxColor.YELLOW;
+			case 4:
+				square.x = 100;
+				square.color = FlxColor.GREEN;
+		}
+	}
 }

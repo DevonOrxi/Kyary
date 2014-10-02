@@ -19,10 +19,5 @@ class GV
 	public static var isBeat = true;
 	public static var beatTime:Float;
 	public static var currentBeat:Int = 1;
-
-	public function new() 
-	{
-		
-	}
 	
 }

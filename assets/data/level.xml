@@ -1,0 +1,5 @@
+<data>
+	<enemy>
+		<lineBullet bar="2" beat="0" velX="0" velY="150" amount="4" interval="1"></lineBullet>
+	</enemy>
+</data>

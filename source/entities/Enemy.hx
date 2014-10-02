@@ -2,8 +2,12 @@ package entities;
 
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
-import managers.BulletEmitter;
+import flixel.FlxG;
+
 import managers.TimeMaster;
+import managers.PatternArchitect;
+
+import haxe.xml.Fast;
 
 /**
  * ...
@@ -11,26 +15,36 @@ import managers.TimeMaster;
  */
 class Enemy extends FlxSprite
 {
-	private var bulletEmitter:BulletEmitter;
+	
 	private var bulletGroup:FlxTypedGroup<Bullet>;
-	//private var tm
-	//private var patternQueue:Array<
+	private var bulletQueue:Array<Bullet>;
 
-	public function new(X:Float=0, Y:Float=0) 
+	public function new(X:Float=0, Y:Float=0, data:Fast) 
 	{
 		super(X, Y);
 		
-		bulletEmitter = new BulletEmitter();
 		bulletGroup = new FlxTypedGroup<Bullet>();
+		
+		bulletQueue = new Array<Bullet>();
+		
+		PatternArchitect.createQueue(bulletQueue, data);
+		
+		/*for (i in bulletQueue)
+		{
+			trace(i.getActivationTime());
+		}*/
 	}
 	
 	override public function update():Void
 	{
 		super.update();		
 		
-		/*if(patternQueue.
-		 * 
-		 * */
+		while (bulletQueue.length > 0 && bulletQueue[0].getActivationTime() <= FlxG.sound.music.time)
+		{
+			var b:Bullet = bulletQueue.shift();
+			b.setPosition(x + width / 2 - b.width / 2, y + height / 2 - b.height / 2);
+			bulletGroup.add(b);
+		}
 	}
 	
 	public function getBulletGroup():FlxTypedGroup<Bullet>

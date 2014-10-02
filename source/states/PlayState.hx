@@ -6,7 +6,9 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.util.FlxColor;
+import haxe.xml.Fast;
 import managers.TimeMaster;
+import openfl.Assets;
 
 
 /**
@@ -14,33 +16,36 @@ import managers.TimeMaster;
  */
 class PlayState extends FlxState
 {	
-	private var square:FlxSprite;	
-	//private var timeMaster:TimeMaster;
+	private var square:FlxSprite;
 	
 	private var player:Player;
 	private var enemy:Enemy;
+	
+	private var data:Xml;
+	private var fastData:Fast;
 	
 	
 	override public function create():Void
 	{
 		super.create();
 		
+		var data = Xml.parse(Assets.getText(AssetPaths.level__xml));
+		var fast = new Fast(data.firstChild());
+		
 		square = new FlxSprite(100, 100);
 		square.makeGraphic(72, 72);
 		square.color = FlxColor.RED;
 		add(square);
 		
-		//timeMaster = new TimeMaster();
-		
 		TimeMaster.init();
 		
-		enemy = new Enemy(400, 400);
+		enemy = new Enemy(400, 100, fast.node.enemy);
 		enemy.makeGraphic(32, 32);
 		add(enemy);
 		add(enemy.getBulletGroup());
 		
 		
-		FlxG.sound.playMusic(AssetPaths.music__mp3);
+		FlxG.sound.playMusic(AssetPaths.music__mp3, 0);
 		
 		//trace(GV.currentBar + "." + GV.currentBeat);
 	}

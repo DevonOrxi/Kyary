@@ -1,5 +1,7 @@
 package states;
 
+import entities.Enemy;
+import entities.Player;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -13,7 +15,10 @@ import managers.TimeMaster;
 class PlayState extends FlxState
 {	
 	private var square:FlxSprite;	
-	private var timeMaster:TimeMaster;
+	//private var timeMaster:TimeMaster;
+	
+	private var player:Player;
+	private var enemy:Enemy;
 	
 	
 	override public function create():Void
@@ -25,12 +30,19 @@ class PlayState extends FlxState
 		square.color = FlxColor.RED;
 		add(square);
 		
-		timeMaster = new TimeMaster();
-		add(timeMaster);
+		//timeMaster = new TimeMaster();
+		
+		TimeMaster.init();
+		
+		enemy = new Enemy(400, 400);
+		enemy.makeGraphic(32, 32);
+		add(enemy);
+		add(enemy.getBulletGroup());
+		
 		
 		FlxG.sound.playMusic(AssetPaths.music__mp3);
 		
-		//trace(currentBar + "." + currentBeat);
+		//trace(GV.currentBar + "." + GV.currentBeat);
 	}
 	
 	
@@ -38,13 +50,15 @@ class PlayState extends FlxState
 	{
 		super.update();
 		
-		if (timeMaster.getIsBeat())
+		TimeMaster.update();
+		
+		if (GV.isBeat)
 			changeFlasheo();
 	}
 	
 	private function changeFlasheo():Void
 	{
-		switch(timeMaster.getCurrentBeat())
+		switch(GV.currentBeat)
 		{
 			case 1:
 				square.y = 100;

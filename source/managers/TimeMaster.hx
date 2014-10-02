@@ -1,72 +1,69 @@
 package managers;
 
-import flixel.FlxSprite;
 import flixel.FlxG;
 
 /**
  * ...
  * @author Acid
  */
-class TimeMaster extends FlxSprite
+class TimeMaster
 {	
-	private var bpm:Float = 165;
+	/*private static var bpm:Float = 165;
 	
-	private var barTime:Float;
-	private var currentBar:Int = 0;
-	private var songBar:Float;	
-	private var barProgress:Float = 0;
+	private static var barTime:Float;
+	private static var currentBar:Int = 0;
+	private static var songBar:Float;	
+	private static var barProgress:Float = 0;
 	
-	private var timeSignature = 4;
+	private static var timeSignature = 4;
 	
-	private var isBeat = true;
-	private var beatTime:Float;
-	private var currentBeat:Int = 1;
+	private static var isBeat = true;
+	private static var beatTime:Float;
+	private static var currentBeat:Int = 1;*/
 
-	public function new() 
+	static public function init() 
 	{
-		super();
 		
-		visible = false;
+		GV.beatTime = 1 / (GV.bpm / 60);
+		GV.barTime = GV.timeSignature * GV.beatTime;
 		
-		beatTime = 1 / (bpm / 60);
-		barTime = timeSignature * beatTime;
+		
 	}
 	
-	override public function update():Void
+	static public function update():Void
 	{
-		super.update();
 		
 		
-		songBar = FlxG.sound.music.time / (1000 * barTime);
-		barProgress = songBar - Math.ffloor(songBar);
+		GV.songBar = FlxG.sound.music.time / (1000 * GV.barTime);
+		GV.barProgress = GV.songBar - Math.ffloor(GV.songBar);
 		
-		isBeat = false;
+		GV.isBeat = false;
 		
-		if (currentBar < Math.floor(songBar))
+		if (GV.currentBar < Math.floor(GV.songBar))
 		{
-			currentBeat = 1;
-			currentBar++;
-			isBeat = true;
+			GV.currentBeat = 1;
+			GV.currentBar++;
+			GV.isBeat = true;
 			//trace(currentBar + "." + currentBeat);
 		}
 		
 		
-		if (!(barProgress < (currentBeat/timeSignature)))
+		if (!(GV.barProgress < (GV.currentBeat/GV.timeSignature)))
 		{
-			currentBeat++;
-			isBeat = true;
+			GV.currentBeat++;
+			GV.isBeat = true;
 			//trace(currentBar + "." + currentBeat);
 		}
 	}
 	
-	public function getCurrentBeat():Int
+	/*public function getCurrentBeat():Int
 	{
-		return currentBeat;
+		return GV.currentBeat;
 	}
 	
 	public function getIsBeat():Bool
 	{
-		return isBeat;
-	}
+		return GV.isBeat;
+	}*/
 	
 }

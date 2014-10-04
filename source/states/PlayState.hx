@@ -54,14 +54,15 @@ class PlayState extends FlxState
 		
 		enemy = new Enemy(0, 0, fast.node.enemy);
 		add(enemy);
-		add(enemy.getBulletGroup());
 		
 		player = new Player();
 		add(player);
 		add(player.getBulletGroup());
+		add(enemy.getBulletGroup());
 		
 		overlay = new FlxSprite(0, 0, AssetPaths.overlay__png);
 		add(overlay);
+		overlay.active = false;
 		
 		add(new FlxText(0, 0, 0, "PROTOTYPE"));
 		
@@ -85,30 +86,29 @@ class PlayState extends FlxState
 		
 		TimeMaster.update();
 		
-		/*
-		if (GV.isBeat)
-			changeFlasheo();
-		*/
+		checkBulletCollision();
 	}
 	
-	/*
-	private function changeFlasheo():Void
+	private function checkBulletCollision():Void
 	{
-		switch(GV.currentBeat)
-		{
-			case 1:
-				square.y = 100;
-				square.color = FlxColor.RED;
-			case 2:
-				square.x = 300;
-				square.color = FlxColor.BLUE;
-			case 3:
-				square.y = 300;
-				square.color = FlxColor.YELLOW;
-			case 4:
-				square.x = 100;
-				square.color = FlxColor.GREEN;
-		}
+		if (FlxG.overlap(enemy, player.getBulletGroup(), damageEnemy))
+			enemy.color = 0xFF0000;
+		else
+			enemy.color = 0xFFFFFF;
+		FlxG.overlap(player, enemy.getBulletGroup(), damagePlayer);
+		
 	}
-	*/
+	
+	private function damageEnemy(e:Enemy,b:Bullet):Void
+	{
+		player.getBulletGroup().remove(b);
+		enemy.health -= GC.playerShotPower;
+	}
+	
+	private function damagePlayer(p:Player,b:Bullet):Void
+	{		
+		enemy.getBulletGroup().remove(b);
+		player.kill();
+		
+	}
 }

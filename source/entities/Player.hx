@@ -38,6 +38,7 @@ class Player extends FlxSprite
 		
 		updateMovement();
 		
+		shoot();
 	}
 	
 	public function getBulletGroup():FlxTypedGroup<Bullet>
@@ -45,19 +46,25 @@ class Player extends FlxSprite
 		return bulletGroup;
 	}
 	
+	private function shoot():Void
+	{
+		if (FlxG.keys.pressed.Z && GV.isBeat)
+			bulletGroup.add(new Bullet(x, y, 0, -200, 0, AssetPaths.shot_2__png));
+	}
+	
 	private function updateMovement():Void
 	{		
 		velocity.x = 0;
 		velocity.y = 0;
 		
-		if ( FlxG.keys.pressed.LEFT && FlxG.keys.pressed.RIGHT )
+		if (FlxG.keys.pressed.LEFT && FlxG.keys.pressed.RIGHT)
 			velocity.x = 0;
 		else if (FlxG.keys.pressed.LEFT)
 			velocity.x = -GC.playerSpeed;
 		else if (FlxG.keys.pressed.RIGHT)
 			velocity.x = GC.playerSpeed;
 			
-		if ( FlxG.keys.pressed.UP && FlxG.keys.pressed.DOWN )
+		if (FlxG.keys.pressed.UP && FlxG.keys.pressed.DOWN)
 			velocity.y = 0;
 		else if (FlxG.keys.pressed.UP)
 			velocity.y = -GC.playerSpeed;
@@ -70,8 +77,20 @@ class Player extends FlxSprite
 			velocity.y *= 0.707;
 		}
 		
+		if (FlxG.keys.pressed.SHIFT)
+		{
+			velocity.x *= 0.5;
+			velocity.y *= 0.5;
+		}
+		
 		if (x < GC.gameMinX)
 			x = GC.gameMinX;
+		else if (x + width > GC.gameMaxX)
+			x = GC.gameMaxX - width;
+		if (y < 0)
+			y = 0;
+		else if (y + height > FlxG.height)
+			y = FlxG.height - height;
 	}
 	
 	

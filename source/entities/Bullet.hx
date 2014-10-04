@@ -28,10 +28,10 @@ class Bullet extends FlxSprite
 			origin.y = -2;
 			offset.x = 2;
 			offset.y = 2;
-		
-			x = X - width / 2;
-			y = Y - height / 2;
 		}
+		
+		x = X - width / 2;
+		y = Y - height / 2;
 		
 		velocity.x = velX;
 		velocity.y = velY;		

@@ -23,18 +23,24 @@ class Enemy extends FlxSprite
 	{
 		super(X, Y);
 		
-		bulletGroup = new FlxTypedGroup<Bullet>();
+		loadGraphic(AssetPaths.boxx__png);
 		
+		width = 104;
+		height = 118;
+		origin.x = -12;
+		origin.y = -4;
+		offset.x = 12;
+		offset.y = 4;
+		
+		health = GC.enemyHealth;
+		
+		x = GC.gameMinX + (GC.gameMaxX - GC.gameMinX) / 2 - width / 2;
+		y = 5;
+		
+		bulletGroup = new FlxTypedGroup<Bullet>();
 		bulletQueue = new Array<Bullet>();
 		
 		PatternArchitect.createQueue(bulletQueue, data);
-		
-		trace(bulletQueue.length);
-		
-		/*for (i in bulletQueue)
-		{
-			trace(i.getActivationTime());
-		}*/
 	}
 	
 	override public function update():Void
@@ -46,7 +52,6 @@ class Enemy extends FlxSprite
 			var b:Bullet = bulletQueue.shift();
 			b.setPosition(x + width / 2 - b.width / 2, y + height / 2 - b.height / 2);
 			bulletGroup.add(b);
-			trace(bulletQueue.length);
 		}
 	}
 	

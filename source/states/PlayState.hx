@@ -1,14 +1,18 @@
 package states;
 
+import entities.Bullet;
 import entities.Enemy;
 import entities.Player;
+import flixel.addons.display.FlxBackdrop;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import haxe.xml.Fast;
 import managers.TimeMaster;
 import openfl.Assets;
+import openfl.display.BlendMode;
 
 
 /**
@@ -16,7 +20,9 @@ import openfl.Assets;
  */
 class PlayState extends FlxState
 {	
-	private var square:FlxSprite;
+	private var overlay:FlxSprite;	
+	private var background:FlxBackdrop;
+	//private var square:FlxSprite;
 	
 	private var player:Player;
 	private var enemy:Enemy;
@@ -32,20 +38,34 @@ class PlayState extends FlxState
 		var data = Xml.parse(Assets.getText(AssetPaths.level__xml));
 		var fast = new Fast(data.firstChild());
 		
+		TimeMaster.init();
+		
+		/*
 		square = new FlxSprite(100, 100);
 		square.makeGraphic(72, 72);
 		square.color = FlxColor.RED;
 		add(square);
+		*/
 		
-		TimeMaster.init();
+		background = new FlxBackdrop(AssetPaths.background__png, 1, 1, false, true);
+		background.x = GC.gameMinX;
+		background.velocity.y = 100;
+		add(background);
 		
-		enemy = new Enemy(400, 100, fast.node.enemy);
-		enemy.makeGraphic(32, 32);
+		enemy = new Enemy(0, 0, fast.node.enemy);
 		add(enemy);
 		add(enemy.getBulletGroup());
 		
+		player = new Player();
+		add(player);
+		add(player.getBulletGroup());
 		
-		FlxG.sound.playMusic(AssetPaths.music__mp3, 1);
+		overlay = new FlxSprite(0, 0, AssetPaths.overlay__png);
+		add(overlay);
+		
+		add(new FlxText(0, 0, 0, "PROTOTYPE"));
+		
+		FlxG.sound.playMusic(AssetPaths.music__wav, 1);
 		
 		//trace(GV.currentBar + "." + GV.currentBeat);
 	}
@@ -55,8 +75,8 @@ class PlayState extends FlxState
 	{
 		super.update();
 		
-		
-		/*if (GV.currentBar == 32 && GV.currentBeat == 1)
+		/*
+		if (GV.currentBar == 32 && GV.currentBeat == 1)
 		{
 			trace("Music time: " + FlxG.sound.music.time);
 			trace("Counter time: " + testCounter);
@@ -65,10 +85,13 @@ class PlayState extends FlxState
 		
 		TimeMaster.update();
 		
+		/*
 		if (GV.isBeat)
 			changeFlasheo();
+		*/
 	}
 	
+	/*
 	private function changeFlasheo():Void
 	{
 		switch(GV.currentBeat)
@@ -87,4 +110,5 @@ class PlayState extends FlxState
 				square.color = FlxColor.GREEN;
 		}
 	}
+	*/
 }

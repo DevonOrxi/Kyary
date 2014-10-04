@@ -12,7 +12,7 @@ class TimeMaster
 	static public function init() 
 	{
 		
-		GV.beatTime = 1 / (GV.bpm / 60) * 1000;
+		GV.beatTime = 1454.56 / GV.timeSignature;	//1 / (GV.bpm / 60) * 1000;
 		GV.barTime = GV.timeSignature * GV.beatTime;
 		
 	}

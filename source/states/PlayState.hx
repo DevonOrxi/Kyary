@@ -45,7 +45,7 @@ class PlayState extends FlxState
 		add(enemy.getBulletGroup());
 		
 		
-		FlxG.sound.playMusic(AssetPaths.music__mp3, 0);
+		FlxG.sound.playMusic(AssetPaths.music__mp3, 1);
 		
 		//trace(GV.currentBar + "." + GV.currentBeat);
 	}
@@ -54,6 +54,14 @@ class PlayState extends FlxState
 	override public function update():Void
 	{
 		super.update();
+		
+		
+		/*if (GV.currentBar == 32 && GV.currentBeat == 1)
+		{
+			trace("Music time: " + FlxG.sound.music.time);
+			trace("Counter time: " + testCounter);
+			trace("Beatbar time: " + GV.beatTime * (GV.currentBar * GV.timeSignature + GV.currentBeat));
+		}*/
 		
 		TimeMaster.update();
 		

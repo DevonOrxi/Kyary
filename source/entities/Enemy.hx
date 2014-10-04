@@ -29,6 +29,8 @@ class Enemy extends FlxSprite
 		
 		PatternArchitect.createQueue(bulletQueue, data);
 		
+		trace(bulletQueue.length);
+		
 		/*for (i in bulletQueue)
 		{
 			trace(i.getActivationTime());
@@ -44,6 +46,7 @@ class Enemy extends FlxSprite
 			var b:Bullet = bulletQueue.shift();
 			b.setPosition(x + width / 2 - b.width / 2, y + height / 2 - b.height / 2);
 			bulletGroup.add(b);
+			trace(bulletQueue.length);
 		}
 	}
 	

@@ -3,16 +3,19 @@ package states;
 import entities.Bullet;
 import entities.Enemy;
 import entities.Player;
+import managers.TimeMaster;
+
 import flixel.addons.display.FlxBackdrop;
+import flixel.addons.plugin.screengrab.FlxScreenGrab;
+
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+
 import haxe.xml.Fast;
-import managers.TimeMaster;
 import openfl.Assets;
-import openfl.display.BlendMode;
 
 
 /**
@@ -47,9 +50,8 @@ class PlayState extends FlxState
 		add(square);
 		*/
 		
-		background = new FlxBackdrop(AssetPaths.background__png, 1, 1, false, true);
-		background.x = GC.gameMinX;
-		background.velocity.y = 100;
+		background = new FlxBackdrop(AssetPaths.backH__png, 1, 1, true, false);
+		background.velocity.x = 100;
 		add(background);
 		
 		enemy = new Enemy(0, 0, fast.node.enemy);
@@ -60,13 +62,10 @@ class PlayState extends FlxState
 		add(player.getBulletGroup());
 		add(enemy.getBulletGroup());
 		
-		overlay = new FlxSprite(0, 0, AssetPaths.overlay__png);
-		add(overlay);
-		overlay.active = false;
-		
 		add(new FlxText(0, 0, 0, "PROTOTYPE"));
 		
-		FlxG.sound.playMusic(AssetPaths.music__wav, 1);
+		FlxG.sound.playMusic(AssetPaths.music__wav, 0);
+		FlxScreenGrab.defineHotKeys(["F1"], true, true);
 		
 		//trace(GV.currentBar + "." + GV.currentBeat);
 	}
@@ -75,6 +74,9 @@ class PlayState extends FlxState
 	override public function update():Void
 	{
 		super.update();
+		
+		if (FlxG.keys.justPressed.F1)
+			FlxScreenGrab.grab();
 		
 		/*
 		if (GV.currentBar == 32 && GV.currentBeat == 1)

@@ -25,17 +25,17 @@ class Enemy extends FlxSprite
 		
 		loadGraphic(AssetPaths.boxx__png);
 		
-		width = 104;
+		/*width = 104;
 		height = 118;
 		origin.x = -12;
 		origin.y = -4;
 		offset.x = 12;
-		offset.y = 4;
+		offset.y = 4;*/
 		
 		health = GC.enemyHealth;
 		
-		x = GC.gameMinX + (GC.gameMaxX - GC.gameMinX) / 2 - width / 2;
-		y = 5;
+		x = 380;
+		y = (FlxG.height - height) / 2;
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
 		bulletQueue = new Array<Bullet>();

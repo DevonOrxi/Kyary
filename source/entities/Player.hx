@@ -17,17 +17,17 @@ class Player extends FlxSprite
 	{
 		super(X, Y);
 		
-		loadGraphic(AssetPaths.kyari__png);
+		loadGraphic(AssetPaths.kyaryzontal__png);
 		
-		width = 16;
+		/*width = 16;
 		height = 28;
 		origin.x = -10;
 		origin.y = -20;
 		offset.x = 10;
-		offset.y = 20;
+		offset.y = 20;*/
 		
-		x = GC.gameMinX + (GC.gameMaxX - GC.gameMinX) / 2 - width / 2;
-		y = FlxG.height - 50;
+		x = 25;
+		y = (FlxG.height - height) / 2;
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
 	}
@@ -49,7 +49,7 @@ class Player extends FlxSprite
 	private function shoot():Void
 	{
 		if (FlxG.keys.pressed.Z && GV.isBeat)
-			bulletGroup.add(new Bullet(x, y, 0, -200, 0, AssetPaths.shot_2__png));
+			bulletGroup.add(new Bullet(x, y, 200, 0, 0, AssetPaths.shot_2__png));
 	}
 	
 	private function updateMovement():Void
@@ -83,10 +83,10 @@ class Player extends FlxSprite
 			velocity.y *= 0.5;
 		}
 		
-		if (x < GC.gameMinX)
-			x = GC.gameMinX;
-		else if (x + width > GC.gameMaxX)
-			x = GC.gameMaxX - width;
+		if (x < 0)
+			x = 0;
+		else if (x + width > FlxG.width)
+			x = FlxG.width - width;
 		if (y < 0)
 			y = 0;
 		else if (y + height > FlxG.height)

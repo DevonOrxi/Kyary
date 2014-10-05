@@ -1,5 +1,5 @@
 <data>
 	<enemy>
-		<lineBullet timestamp="8727" velX="0" velY="150" amount="4" interval="1"></lineBullet>
+		<lineBullet timestamp="8727" velX="-150" velY="0" amount="4" interval="1"></lineBullet>
 	</enemy>
 </data>

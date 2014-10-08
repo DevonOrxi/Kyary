@@ -11,14 +11,14 @@ import flixel.group.FlxTypedGroup;
 class Player extends FlxSprite
 {
 	
-	private var bulletGroup:FlxTypedGroup<Bullet>;
+	@:isVar public var bulletGroup(get,null):FlxTypedGroup<Bullet>;
 
-	public function new(X:Float=0, Y:Float=0) 
-	{
+	public function new(X:Float=0, Y:Float=0) {
 		super(X, Y);
 		
-		loadGraphic(AssetPaths.kyaryzontal__png);
+		loadGraphic("assets/images/kyaryzontal.png");
 		
+		//	Player hitbox and offset setting
 		/*width = 16;
 		height = 28;
 		origin.x = -10;
@@ -32,31 +32,36 @@ class Player extends FlxSprite
 		bulletGroup = new FlxTypedGroup<Bullet>();
 	}
 	
-	override public function update():Void
-	{
+	override public function update():Void {
 		super.update();
 		
+		//	Movement input checking
 		updateMovement();
 		
 		shoot();
 	}
 	
-	public function getBulletGroup():FlxTypedGroup<Bullet>
-	{
+	//	Bullet group getter
+	public function get_bulletGroup():FlxTypedGroup<Bullet> {
 		return bulletGroup;
 	}
 	
-	private function shoot():Void
-	{
+	
+	private function shoot():Void {
+		//	Shoot when Z is pressed AND the beat is on
 		if (FlxG.keys.pressed.Z && GV.isBeat)
-			bulletGroup.add(new Bullet(x, y, 200, 0, 0, AssetPaths.shot_2__png));
+		{
+			bulletGroup.add(new Bullet(x, y, "assets/images/shot-2.png"));
+			//FlxG.sound.play("assets/sounds/boop.wav");
+		}
 	}
 	
-	private function updateMovement():Void
-	{		
+	//	Movement input checking
+	private function updateMovement():Void {		
 		velocity.x = 0;
 		velocity.y = 0;
 		
+		//	Left-right input
 		if (FlxG.keys.pressed.LEFT && FlxG.keys.pressed.RIGHT)
 			velocity.x = 0;
 		else if (FlxG.keys.pressed.LEFT)
@@ -64,25 +69,30 @@ class Player extends FlxSprite
 		else if (FlxG.keys.pressed.RIGHT)
 			velocity.x = GC.playerSpeed;
 			
+		//	Up-down input
 		if (FlxG.keys.pressed.UP && FlxG.keys.pressed.DOWN)
 			velocity.y = 0;
 		else if (FlxG.keys.pressed.UP)
 			velocity.y = -GC.playerSpeed;
 		else if (FlxG.keys.pressed.DOWN)
 			velocity.y = GC.playerSpeed;
-			
+		
+		//	Hardcoded diagonal speed
+		//  "Hardcoded" means "good"
 		if (velocity.x != 0 && velocity.y != 0)
 		{
 			velocity.x *= 0.707;
 			velocity.y *= 0.707;
 		}
 		
+		//	Focus mode
 		if (FlxG.keys.pressed.SHIFT)
 		{
 			velocity.x *= 0.5;
 			velocity.y *= 0.5;
 		}
 		
+		//	OOB checking
 		if (x < 0)
 			x = 0;
 		else if (x + width > FlxG.width)

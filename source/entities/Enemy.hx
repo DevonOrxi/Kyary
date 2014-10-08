@@ -16,14 +16,14 @@ import haxe.xml.Fast;
 class Enemy extends FlxSprite
 {
 	
-	private var bulletGroup:FlxTypedGroup<Bullet>;
+	@:isVar public var bulletGroup(get,null):FlxTypedGroup<Bullet>;
 	private var bulletQueue:Array<Bullet>;
+	private var type:String = "enemy";
 
-	public function new(X:Float=0, Y:Float=0, data:Fast) 
-	{
+	public function new(X:Float=0, Y:Float=0, data:Fast) {
 		super(X, Y);
 		
-		loadGraphic(AssetPaths.boxx__png);
+		loadGraphic("assets/images/boxx.png");
 		
 		/*width = 104;
 		height = 118;
@@ -32,7 +32,7 @@ class Enemy extends FlxSprite
 		offset.x = 12;
 		offset.y = 4;*/
 		
-		health = GC.enemyHealth;
+		health = GC.enemyMaxHealth;
 		
 		x = 380;
 		y = (FlxG.height - height) / 2;
@@ -43,11 +43,10 @@ class Enemy extends FlxSprite
 		PatternArchitect.createQueue(bulletQueue, data);
 	}
 	
-	override public function update():Void
-	{
+	override public function update():Void {
 		super.update();		
 		
-		while (bulletQueue.length > 0 && bulletQueue[0].getActivationTime() <= FlxG.sound.music.time)
+		while (bulletQueue.length > 0 && bulletQueue[0].get_activationTime() <= FlxG.sound.music.time)
 		{
 			var b:Bullet = bulletQueue.shift();
 			b.setPosition(x + width / 2 - b.width / 2, y + height / 2 - b.height / 2);
@@ -55,8 +54,7 @@ class Enemy extends FlxSprite
 		}
 	}
 	
-	public function getBulletGroup():FlxTypedGroup<Bullet>
-	{
+	public function get_bulletGroup():FlxTypedGroup<Bullet>	{
 		return bulletGroup;
 	}
 	

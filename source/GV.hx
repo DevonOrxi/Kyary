@@ -16,8 +16,9 @@ class GV
 	
 	public static var timeSignature = 4;
 	
-	public static var isBeat = true;
+	public static var isBeat:Bool = true;
 	public static var beatTime:Float;
 	public static var currentBeat:Int = 1;
 	
+	public static var checker:Bool = false;
 }

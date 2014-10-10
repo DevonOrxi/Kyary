@@ -3,7 +3,6 @@ package entities;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.group.FlxTypedGroup;
-import managers.TimeMaster;
 
 /**
  * ...
@@ -50,7 +49,7 @@ class Player extends FlxSprite
 	
 	private function shoot():Void {
 		//	Shoot when Z is pressed AND the beat is on
-		if (FlxG.keys.pressed.Z && TimeMaster.isBeat)
+		if (FlxG.keys.pressed.Z && GV.isBeat)
 		{
 			bulletGroup.add(new Bullet(x, y, "assets/images/shot-2.png"));
 			//FlxG.sound.play("assets/sounds/boop.wav");

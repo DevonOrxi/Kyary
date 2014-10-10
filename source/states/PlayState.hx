@@ -14,7 +14,6 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.ui.FlxBar;
-import flixel.addons.effects.FlxTrail;
 
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -31,7 +30,6 @@ class PlayState extends FlxState
 	
 	private var player:Player;
 	private var enemy:Enemy;
-	private var enemyTrail:FlxTrail;
 	
 	private var data:Xml;
 	private var fastData:Fast;
@@ -78,11 +76,9 @@ class PlayState extends FlxState
 		//	Justin Case.
 		temp.destroy();
 		
-		enemyTrail = new FlxTrail(enemy, null, 8, 5, 0.4, 0.05);		
 		
 		//	Add all the stuff to the state
 		add(background);
-		add(enemyTrail);
 		add(enemy);
 		add(player);
 		add(player.bulletGroup);
@@ -91,9 +87,9 @@ class PlayState extends FlxState
 		
 		/*
 		add(new FlxText(0, 0, 0, "PROTOTYPE"));		
-		trace(TimeMaster.currentBar + "." + TimeMaster.currentBeat);
+		trace(GV.currentBar + "." + GV.currentBeat);
 		/*
-		testText = new FlxText(0, 0, 0, TimeMaster.currentBar + "." + TimeMaster.currentBeat, 100);		
+		testText = new FlxText(0, 0, 0, GV.currentBar + "." + GV.currentBeat, 100);		
 		add(testText);
 		*/
 	}
@@ -115,13 +111,13 @@ class PlayState extends FlxState
 		
 		
 		/*
-		testText.text = TimeMaster.currentBar + "." + TimeMaster.currentBeat;
+		testText.text = GV.currentBar + "." + GV.currentBeat;
 		/*
-		if (TimeMaster.currentBar == 32 && TimeMaster.currentBeat == 1)
+		if (GV.currentBar == 32 && GV.currentBeat == 1)
 		{
 			trace("Music time: " + FlxG.sound.music.time);
 			trace("Counter time: " + testCounter);
-			trace("Beatbar time: " + TimeMaster.beatTime * (TimeMaster.currentBar * TimeMaster.timeSignature + TimeMaster.currentBeat));
+			trace("Beatbar time: " + GV.beatTime * (GV.currentBar * GV.timeSignature + GV.currentBeat));
 		}*/
 	}
 	

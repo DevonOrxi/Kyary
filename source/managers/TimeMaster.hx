@@ -1,75 +1,64 @@
 package managers;
 
 import flixel.FlxG;
-import haxe.xml.Fast;
 
 /**
  * ...
  * @author Acid
  */
 class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
-{	
-	public static var bpm:Float = 165;
-	
-	public static var barTime:Float;
-	public static var currentBar:Int = 0;
-	public static var songBar:Float;	
-	public static var barProgress:Float = 0;
-	
-	public static var timeSignature = 4;
-	
-	public static var isBeat:Bool = true;
-	public static var beatTime:Float;
-	public static var currentBeat:Int = 1;
+{
 
 	static public function init() {
 		
-		beatTime = /*1454.54 / timeSignature;*/	1 / (bpm / 60) * 1000;
-		barTime = timeSignature * beatTime + 0.000151171579;
+		GV.beatTime = /*1454.54 / GV.timeSignature;*/	1 / (GV.bpm / 60) * 1000;
+		GV.barTime = GV.timeSignature * GV.beatTime + 0.000151171579;
 		
 	}
 	
 	static public function update():Void {
 		
-		songBar = FlxG.sound.music.time / barTime;
-		barProgress = songBar - Math.ffloor(songBar);
+		GV.songBar = FlxG.sound.music.time / GV.barTime;
+		GV.barProgress = GV.songBar - Math.ffloor(GV.songBar);
 		
-		isBeat = false;
+		GV.isBeat = false;
 		
-		if (currentBar < Math.floor(songBar))
+		if (GV.currentBar < Math.floor(GV.songBar))
 		{
-			currentBeat = 1;
-			currentBar++;
-			isBeat = true;
-			//trace(currentBar + "." + currentBeat);
+			GV.currentBeat = 1;
+			GV.currentBar++;
+			GV.isBeat = true;
+			//trace(GV.currentBar + "." + GV.currentBeat);
 		}		
-		else if (!(barProgress < (currentBeat/timeSignature)))
+		else if (!(GV.barProgress < (GV.currentBeat/GV.timeSignature)))
 		{
-			currentBeat++;
-			isBeat = true;
-			//trace(currentBar + "." + currentBeat);
+			GV.currentBeat++;
+			GV.isBeat = true;
+			//trace(GV.currentBar + "." + GV.currentBeat);
 		}
 		
 		
 		/*	This calculates the difference between the real song time at bar 132 and the math division
 		 * 	Just for testing purposes
 		
-		trace(currentBar);
-		if (currentBar == 132 && !checker)
+		trace(GV.currentBar);
+		if (GV.currentBar == 132 && !GV.checker)
 		{
-			trace((FlxG.sound.music.time - currentBar * beatTime * timeSignature) / (currentBar * beatTime * timeSignature));
-			checker = true;
+			trace((FlxG.sound.music.time - GV.currentBar * GV.beatTime * GV.timeSignature) / (GV.currentBar * GV.beatTime * GV.timeSignature));
+			GV.checker = true;
 			//FlxG.sound.play(AssetPaths.boop__mp3);
 		}*/
 		
 	}
 	
-	//	
-	static public function calculateBeatAmount(intervalIndex:Int, step:Fast):Float {
-		return(
-			(step.has.bar ? Std.parseFloat(step.att.bar) * timeSignature : 0) +
-			(step.has.beat ? Std.parseFloat(step.att.beat) - 1 : 0 ) +
-			(step.has.interval ? intervalIndex * Std.parseFloat(step.att.interval) : 0)
-		);
+	/*public function getCurrentBeat():Int
+	{
+		return GV.currentBeat;
 	}
+	
+	public function getIsBeat():Bool
+	{
+		return GV.isBeat;
+	}*/
+	
 }

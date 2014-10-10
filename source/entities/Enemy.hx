@@ -28,7 +28,7 @@ class Enemy extends FlxSprite
 	public function new(X:Float=0, Y:Float=0, data:Fast) {
 		super(X, Y);
 		
-		loadGraphic("assets/images/boxx.png");
+		loadGraphic("assets/images/boxx_nb.png");
 		
 		/*width = 104;
 		height = 118;

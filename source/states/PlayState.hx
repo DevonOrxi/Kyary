@@ -32,6 +32,7 @@ class PlayState extends FlxState
 	private var player:Player;
 	private var enemy:Enemy;
 	private var enemyTrail:FlxTrail;
+	private var enemyBlur:FlxSprite;
 	
 	private var data:Xml;
 	private var fastData:Fast;
@@ -70,23 +71,26 @@ class PlayState extends FlxState
 		var temp:FlxSprite = new FlxSprite(0, 0, "assets/images/bar_empty.png");
 		
 		//	... then create and set the life bar up.
-		enemyLifeBar = new FlxBar( 0, FlxG.height, FlxBar.FILL_HORIZONTAL_INSIDE_OUT, Math.floor(temp.width), Math.floor(temp.height), enemy, "health");// , 0, GC.enemyMaxHealth);
-		enemyLifeBar.createImageBar("assets/images/bar_empty.png", "assets/images/bar_full.png");
+		enemyLifeBar = new FlxBar( FlxG.width - temp.width, FlxG.height, FlxBar.FILL_LEFT_TO_RIGHT, Math.floor(temp.width), Math.floor(temp.height), enemy, "health");// , 0, GC.enemyMaxHealth);
+		enemyLifeBar.createImageBar(null, "assets/images/bar_full.png",0x000000);
 		//enemyLifeBar.createGradientBar([0xFF2a2828], [0xFF16EE5d,0xFFEEBE16,0xFF920000,0xFFEEBE16,0xFF16EE5d], 1, 180, true);
 		enemyLifeBar.y -= enemyLifeBar.height;
 		
 		//	Justin Case.
 		temp.destroy();
 		
-		enemyTrail = new FlxTrail(enemy, null, 8, 5, 0.4, 0.05);		
+		enemyTrail = new FlxTrail(enemy, "assets/images/boxx_nb.png", 8, 5, 0.4, 0.05);
+		//enemyBlur = new FlxSprite(enemy.x, enemy.y, "assets/images/boxx_b.png");
 		
 		//	Add all the stuff to the state
 		add(background);
 		add(enemyTrail);
+		//add(enemyBlur);
 		add(enemy);
 		add(player);
 		add(player.bulletGroup);
 		add(enemy.bulletGroup);
+		add(new FlxSprite(enemyLifeBar.x, enemyLifeBar.y, "assets/images/bar_empty.png"));
 		add(enemyLifeBar);
 		
 		/*
@@ -102,6 +106,9 @@ class PlayState extends FlxState
 	override public function update():Void {
 		
 		super.update();
+		
+		//enemyBlur.x = enemy.x;
+		//enemyBlur.y = enemy.y;		
 		
 		//	F1 takes a screenshot for you to save wherever you want
 		if (FlxG.keys.justPressed.F1)

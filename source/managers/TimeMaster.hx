@@ -19,6 +19,7 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 	public static var timeSignature = 4;
 	
 	public static var isBeat:Bool = true;
+	public static var isHalfBeat:Bool = true;
 	public static var beatTime:Float;
 	public static var currentBeat:Int = 1;
 
@@ -35,6 +36,7 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 		barProgress = songBar - Math.ffloor(songBar);
 		
 		isBeat = false;
+		isHalfBeat = false;
 		
 		if (currentBar < Math.floor(songBar))
 		{
@@ -43,7 +45,7 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 			isBeat = true;
 			//trace(currentBar + "." + currentBeat);
 		}		
-		else if (!(barProgress < (currentBeat/timeSignature)))
+		else if (barProgress > (currentBeat/timeSignature))
 		{
 			currentBeat++;
 			isBeat = true;

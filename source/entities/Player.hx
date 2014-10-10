@@ -12,7 +12,8 @@ import managers.TimeMaster;
 class Player extends FlxSprite
 {
 	
-	@:isVar public var bulletGroup(get,null):FlxTypedGroup<Bullet>;
+	@:isVar public var bulletGroup(get, null):FlxTypedGroup<Bullet>;
+	private var bulletQueue:Array<Bullet>;
 
 	public function new(X:Float=0, Y:Float=0) {
 		super(X, Y);
@@ -31,28 +32,26 @@ class Player extends FlxSprite
 		y = (FlxG.height - height) / 2;
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
+		bulletQueue = new Array<Bullet>();
 	}
 	
 	override public function update():Void {
 		super.update();
 		
+		/*shootingAnim.x = x + 72 - shootingAnim.width / 2;
+		shootingAnim.y = y + 18 - shootingAnim.height / 2;*/
+		
 		//	Movement input checking
 		updateMovement();
 		
 		shoot();
-	}
-	
-	//	Bullet group getter
-	public function get_bulletGroup():FlxTypedGroup<Bullet> {
-		return bulletGroup;
-	}
-	
+	}	
 	
 	private function shoot():Void {
 		//	Shoot when Z is pressed AND the beat is on
 		if (FlxG.keys.pressed.Z && TimeMaster.isBeat)
 		{
-			bulletGroup.add(new Bullet(x, y, "assets/images/shot-2.png"));
+			bulletGroup.add(new Bullet(x + 72, y + 18, "assets/images/shot-2.png"));
 			//FlxG.sound.play("assets/sounds/boop.wav");
 		}
 	}
@@ -104,6 +103,8 @@ class Player extends FlxSprite
 			y = FlxG.height - height;
 	}
 	
-	
+	public function get_bulletGroup():FlxTypedGroup<Bullet>	{
+		return bulletGroup;
+	}
 	
 }

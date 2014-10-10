@@ -34,6 +34,9 @@ class Bullet extends FlxSprite
 		velocity.x = GC.playerBulletSpeed;
 		x = X - width / 2;
 		y = Y - height / 2;
+				
+		scale.x = 2;
+		scale.y = 2;
 	}
 	
 	override public function update():Void {

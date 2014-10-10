@@ -52,7 +52,7 @@ class Bullet extends FlxSprite
 		return activationTime;
 	}
 	
-	public function setSpeed(speed:Float):Void
+	public function setSpeedDirection(speed:Float):Void
 	{		
 		var p:FlxPoint = new FlxPoint();
 		p = FlxAngle.getCartesianCoords(speed, angle);

@@ -6,12 +6,10 @@ package ;
  */
 class GC
 {
-
-	public static inline var gameMinX:Float = 140;
-	public static inline var gameMaxX:Float = 340;
-	public static inline var gameWidth:Float = 200;
-	public static inline var playerSpeed:Float = 150;
-	public static inline var enemyHealth:Int = 1000;
-	public static inline var playerShotPower:Int = 1;
+	
+	public static inline var playerSpeed:Float = 200;
+	public static inline var playerBulletSpeed:Float = 400;
+	public static inline var enemyMaxHealth:Float = 100;
+	public static inline var playerBulletPower:Float = 0.1;
 	
 }

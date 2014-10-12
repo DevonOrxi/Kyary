@@ -1,11 +1,14 @@
 <data>
 	<enemy>
-		<bulletFan bar="2" beat="1" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="4" amount="6" interval="0" >  spawnerInterval="0.5"</bulletFan>
-		<move bar="2" beat="2" y="120" duration="3"></move>
-		<bulletFan bar="3" beat="1" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="5" amount="6" interval="0" ></bulletFan>
-		<move bar="3" beat="2" y="240" duration="3"></move>
-		<bulletFan bar="4" beat="1" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="6" amount="6" interval="0" ></bulletFan>
-		<move bar="4" beat="2" y="center" duration="3"></move>
+		<charge bar="1" beat="4"></charge>
+		<bulletFan bar="2" beat="2" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="4" amount="6" interval="0" >  spawnerInterval="0.5"</bulletFan>
+		<move bar="2" beat="3" y="120" duration="2"></move>
+		<charge bar="2" beat="4"></charge>
+		<bulletFan bar="3" beat="2" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="5" amount="6" interval="0" ></bulletFan>
+		<move bar="3" beat="3" y="240" duration="2"></move>
+		<charge bar="3" beat="4"></charge>
+		<bulletFan bar="4" beat="2" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="6" amount="6" interval="0" ></bulletFan>
+		<move bar="4" beat="3" y="center" duration="2"></move>
 		<bulletFan bar="63" beat="1" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="6" amount="6" interval="0" ></bulletFan>
 		<bulletFan bar="64" beat="1" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="6" amount="6" interval="0" ></bulletFan>
 		<bulletFan bar="65" beat="1" speed="300" speedFrom="500" angle="180" amplitude="60" spawners="6" amount="6" interval="0" ></bulletFan>

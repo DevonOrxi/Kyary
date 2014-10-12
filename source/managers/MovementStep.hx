@@ -17,8 +17,6 @@ class MovementStep
 		y = Y;
 		activationTime = ActivationTime;
 		duration = Duration;
-		
-		trace(duration);
 	}
 	
 	public function get_x():String {

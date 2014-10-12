@@ -12,7 +12,7 @@ import managers.MovementStep;
 class PatternArchitect
 {
 	
-	static public function createQueue(bulletQ:Array<Bullet>, movementQ:Array<MovementStep>, data:Fast) {
+	static public function createQueue(bulletQ:Array<Bullet>, movementQ:Array<MovementStep>, chargeQ:Array<Float>, data:Fast) {
 		
 		for (step in data.elements) {
 			if (step.name == "bulletFan") {
@@ -79,6 +79,10 @@ class PatternArchitect
 					step.has.duration ? Std.parseFloat(step.att.duration) * TimeMaster.beatTime  : 0
 				));
 				
+			}
+			
+			if (step.name == "charge") {
+				chargeQ.push((step.has.bar && step.has.beat) ? TimeMaster.calculateBeatAmount(0, step) * TimeMaster.beatTime : 0);
 			}
 		}
 	}	

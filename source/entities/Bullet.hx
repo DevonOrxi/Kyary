@@ -22,7 +22,8 @@ class Bullet extends FlxSprite
 		}
 		else
 		{
-			loadRotatedGraphic("assets/images/shot.png", 45, -1, true, true);
+			loadRotatedGraphic("assets/images/shotB.png", 45, -1, true, true);
+			
 			/*width = 6;
 			height = 6;
 			origin.x = -2;

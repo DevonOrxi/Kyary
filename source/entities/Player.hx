@@ -52,7 +52,7 @@ class Player extends FlxSprite
 		if (FlxG.keys.pressed.Z && TimeMaster.isBeat)
 		{
 			bulletGroup.add(new Bullet(x + 72, y + 18, "assets/images/shot-2.png"));
-			//FlxG.sound.play("assets/sounds/boop.wav");
+			FlxG.sound.play("assets/sounds/shoot.wav", 1.5, false, false);
 		}
 	}
 	

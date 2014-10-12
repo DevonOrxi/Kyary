@@ -89,6 +89,7 @@ class PlayState extends FlxState
 		add(enemy);
 		add(player);
 		add(player.bulletGroup);
+		add(enemy.chargeAnim);
 		add(enemy.bulletGroup);
 		add(new FlxSprite(enemyLifeBar.x, enemyLifeBar.y, "assets/images/bar_empty.png"));
 		add(enemyLifeBar);
@@ -100,6 +101,14 @@ class PlayState extends FlxState
 		testText = new FlxText(0, 0, 0, TimeMaster.currentBar + "." + TimeMaster.currentBeat, 100);		
 		add(testText);
 		*/
+		
+		/*
+		var charge:FlxSprite = new FlxSprite(player.x, player.y);
+		charge.loadGraphic("assets/images/charge.png", true, 96, 96);
+		charge.animation.add("charge1", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 15, true);
+		charge.animation.add("charge2", [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], 15, true);
+		charge.animation.play("charge2");
+		add(charge);*/
 	}
 	
 	
@@ -151,6 +160,8 @@ class PlayState extends FlxState
 		
 		player.bulletGroup.remove(b);
 		enemy.health -= GC.playerBulletPower;
+		
+		FlxG.sound.play("assets/sounds/hurt.wav", 1, false, false);
 		
 	}
 	

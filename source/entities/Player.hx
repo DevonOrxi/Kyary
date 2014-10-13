@@ -3,6 +3,9 @@ package entities;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.group.FlxTypedGroup;
+import flixel.util.loaders.TexturePackerData;
+import flixel.tweens.FlxTween;
+import flixel.system.FlxSound;
 import managers.TimeMaster;
 
 /**
@@ -13,12 +16,44 @@ class Player extends FlxSprite
 {
 	
 	@:isVar public var bulletGroup(get, null):FlxTypedGroup<Bullet>;
-	private var bulletQueue:Array<Bullet>;
+	@:isVar public var shotAnim(get,null):FlxSprite;
+	@:isVar public var heart(get,null):FlxSprite;
+	@:isVar public var hurtSFX(get,null):FlxSound;
+	@:isVar public var shootSFX(get,null):FlxSound;
+	private var isFocused:Bool = false;
 
 	public function new(X:Float=0, Y:Float=0) {
-		super(X, Y);
+		super(X, Y);		
 		
-		loadGraphic("assets/images/kyaryzontal.png");
+		hurtSFX = FlxG.sound.load("assets/sounds/explode.wav", 1, false);
+		shootSFX = FlxG.sound.load("assets/sounds/shoot.wav", 1, false);
+		
+		var tex:TexturePackerData = new TexturePackerData("assets/data/kyary.json", "assets/images/kyary.png");
+		loadGraphicFromTexture(tex);
+		var names:Array<String> = new Array<String>();
+		for (i in 0...6)
+			names.push("kyary_" + i + ".png");
+		animation.addByNames("idle", names, 15);
+		animation.play("idle");
+		
+		shotAnim = new FlxSprite(30, 18);
+		tex = new TexturePackerData("assets/data/bulletParticle.json", "assets/images/bulletParticle.png");
+		shotAnim.loadGraphicFromTexture(tex);
+		names = new Array<String>();
+		for (i in 0...6)
+			names.push("bulletParticle_" + i + ".png");
+		shotAnim.animation.addByNames("shoot", names, 15, false);
+		shotAnim.visible = false;
+		
+		heart = new FlxSprite(8, 16, "assets/images/heart2.png");
+		FlxTween.color(heart, TimeMaster.beatTime / 1000, 0xFFFFFF, 0xFFFFFF, 1, 0.4, { type: FlxTween.PINGPONG } );
+		heart.visible = false;
+		heart.width = 8;
+		heart.height = 10;
+		heart.offset.x = 1;
+		heart.offset.y = 1;
+		
+		//loadGraphic("assets/images/kyaryzontal.png");
 		
 		//	Player hitbox and offset setting
 		/*width = 16;
@@ -28,21 +63,31 @@ class Player extends FlxSprite
 		offset.x = 10;
 		offset.y = 20;*/
 		
+		
+		health = GC.playerLives;
 		x = 25;
 		y = (FlxG.height - height) / 2;
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
-		bulletQueue = new Array<Bullet>();
 	}
 	
 	override public function update():Void {
 		super.update();
 		
-		/*shootingAnim.x = x + 72 - shootingAnim.width / 2;
-		shootingAnim.y = y + 18 - shootingAnim.height / 2;*/
+		shotAnim.x = x + 30 - shotAnim.width / 2;
+		shotAnim.y = y + 18 - shotAnim.height / 2;
+		if (shotAnim.animation.finished)
+			shotAnim.visible = false;
+		
+		heart.x = x + 9;
+		heart.y = y + 16;
 		
 		//	Movement input checking
 		updateMovement();
+		if (isFocused)
+			heart.visible = true;
+		else
+			heart.visible = false;
 		
 		shoot();
 	}	
@@ -51,8 +96,10 @@ class Player extends FlxSprite
 		//	Shoot when Z is pressed AND the beat is on
 		if (FlxG.keys.pressed.Z && TimeMaster.isBeat)
 		{
-			bulletGroup.add(new Bullet(x + 72, y + 18, "assets/images/shot-2.png"));
-			FlxG.sound.play("assets/sounds/shoot.wav", 1.5, false, false);
+			bulletGroup.add(new Bullet(x + 30, y + 18, "assets/images/shot-2big.png"));
+			shootSFX.play();
+			shotAnim.animation.play("shoot", true);
+			shotAnim.visible = true;
 		}
 	}
 	
@@ -88,9 +135,12 @@ class Player extends FlxSprite
 		//	Focus mode
 		if (FlxG.keys.pressed.SHIFT)
 		{
+			isFocused = true;
 			velocity.x *= 0.5;
 			velocity.y *= 0.5;
 		}
+		else
+			isFocused = false;
 		
 		//	OOB checking
 		if (x < 0)
@@ -105,6 +155,22 @@ class Player extends FlxSprite
 	
 	public function get_bulletGroup():FlxTypedGroup<Bullet>	{
 		return bulletGroup;
+	}
+	
+	public function get_shotAnim():FlxSprite	{
+		return shotAnim;
+	}
+	
+	public function get_heart():FlxSprite	{
+		return heart;
+	}
+	
+	public function get_shootSFX():FlxSound	{
+		return shootSFX;
+	}
+	
+	public function get_hurtSFX():FlxSound	{
+		return hurtSFX;
 	}
 	
 }

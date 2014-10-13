@@ -1,6 +1,7 @@
 package managers;
 
 import flixel.FlxG;
+import flixel.system.FlxSound;
 import haxe.xml.Fast;
 
 /**
@@ -9,19 +10,24 @@ import haxe.xml.Fast;
  */
 class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 {	
-	public static var bpm:Float = 165;
+	static public var bpm:Float = 165;
 	
-	public static var barTime:Float;
-	public static var currentBar:Int = 0;
-	public static var songBar:Float;	
-	public static var barProgress:Float = 0;
+	static public var barTime:Float;
+	static public var currentBar:Int = 0;
+	static public var songBar:Float;	
+	static public var barProgress:Float = 0;
 	
-	public static var timeSignature = 4;
+	static public var timeSignature = 4;
 	
-	public static var isBeat:Bool = true;
-	public static var isHalfBeat:Bool = true;
-	public static var beatTime:Float;
-	public static var currentBeat:Int = 1;
+	static public var isBeat:Bool = true;
+	static public var isHalfBeat:Bool = true;
+	static public var checker:Bool = false;
+	static public var beatTime:Float;
+	static public var currentBeat:Int = 1;
+	static public var currentHalfBeat:Int = 1;
+	
+	static public var beatScale:Float = 1;
+	static public var song:FlxSound;
 
 	static public function init() {
 		
@@ -32,7 +38,7 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 	
 	static public function update():Void {
 		
-		songBar = FlxG.sound.music.time / barTime;
+		songBar = TimeMaster.song.time / barTime;
 		barProgress = songBar - Math.ffloor(songBar);
 		
 		isBeat = false;
@@ -41,30 +47,41 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 		if (currentBar < Math.floor(songBar))
 		{
 			currentBeat = 1;
+			currentHalfBeat = 1;
 			currentBar++;
 			isBeat = true;
-			//trace(currentBar + "." + currentBeat);
+			isHalfBeat = true;
+			//trace(currentBar + "." + currentBeat + "." + currentHalfBeat);
 		}		
 		else if (barProgress > (currentBeat/timeSignature))
 		{
 			currentBeat++;
+			currentHalfBeat++;
 			isBeat = true;
-			//trace(currentBar + "." + currentBeat);
+			isHalfBeat = true;
+			//trace(currentBar + "." + currentBeat + "." + currentHalfBeat);
+		}
+		else if (barProgress > (currentHalfBeat / (2 * timeSignature)))
+		{
+			currentHalfBeat++;
+			isHalfBeat = true;
+			//trace(currentBar + "." + currentBeat + "." + currentHalfBeat);
 		}
 		
 		
 		/*	This calculates the difference between the real song time at bar 132 and the math division
-		 * 	Just for testing purposes
+		 * 	Just for testing purposes */
 		
-		trace(currentBar);
+		//trace(currentBar);
 		if (currentBar == 132 && !checker)
 		{
 			trace((FlxG.sound.music.time - currentBar * beatTime * timeSignature) / (currentBar * beatTime * timeSignature));
 			checker = true;
-			//FlxG.sound.play(AssetPaths.boop__mp3);
-		}*/
+			FlxG.sound.play("assets/sounds/explode.wav");
+		}
 		
 	}
+	
 	
 	//	
 	static public function calculateBeatAmount(intervalIndex:Int, step:Fast):Float {

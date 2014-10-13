@@ -3,12 +3,13 @@ package entities;
 import flixel.FlxSprite;
 import flixel.group.FlxTypedGroup;
 import flixel.FlxG;
+import flixel.system.FlxSound;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxPoint;
 
 import managers.TimeMaster;
-import managers.PatternArchitect;
+import managers.QueueManager;
 import managers.MovementStep;
 
 import haxe.xml.Fast;
@@ -22,13 +23,23 @@ class Enemy extends FlxSprite
 	
 	@:isVar public var bulletGroup(get, null):FlxTypedGroup<Bullet>;
 	@:isVar public var chargeAnim(get, null):ChargeAnim;
+	@:isVar public var localScale(get, null):Float = 1;
+	@:isVar public var hurtSFX(get,null):FlxSound;
+	@:isVar public var shootSFX(get,null):FlxSound;
+	@:isVar public var chargeSFX(get,null):FlxSound;
+	
 	private var shootingPoint:FlxPoint;
 	private var bulletQueue:Array<Bullet>;
 	private var movementQueue:Array<MovementStep>;
 	private var chargeQueue:Array<Float>;
+	private var checkShoot:Bool = false;
 
-	public function new(X:Float=0, Y:Float=0, data:Fast) {
+	public function new(X:Float=0, Y:Float=0) {
 		super(X, Y);
+		
+		hurtSFX = FlxG.sound.load("assets/sounds/hurt.wav", 1);
+		shootSFX = FlxG.sound.load("assets/sounds/shoot4.wav", 0.8);
+		chargeSFX = FlxG.sound.load("assets/sounds/charge.wav", 1);
 		
 		loadGraphic("assets/images/boxx_nb.png");
 		
@@ -46,28 +57,48 @@ class Enemy extends FlxSprite
 		y = (FlxG.height - height) / 2;
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
-		bulletQueue = new Array<Bullet>();
-		movementQueue = new Array<MovementStep>();
-		chargeQueue = new Array<Float>();
+		bulletQueue = QueueManager.enemyBulletQueue;
+		movementQueue = QueueManager.enemyMovementQueue;
+		chargeQueue = QueueManager.enemyChargeQueue;
 		chargeAnim = new ChargeAnim();
-		
-		PatternArchitect.createQueue(bulletQueue, movementQueue, chargeQueue, data);
 	}
 	
 	override public function update():Void {
+		
 		super.update();
 		
-		var checkShoot = false;
-		while (bulletQueue.length > 0 && bulletQueue[0].activationTime <= FlxG.sound.music.time) 
+		shootQueued();
+		moveQueued();
+		animateQueued();
+		
+		if (TimeMaster.isBeat)
 		{
-			if (!checkShoot)
-				FlxG.sound.play("assets/sounds/shoot2.wav", 0.04, false, false);
+			FlxTween.num(1.05, 1, TimeMaster.beatTime / (1000*8), { type: FlxTween.ONESHOT }, tweenFunction.bind(this));
+		}
+		
+		TimeMaster.beatScale = localScale;
+		scale.x = localScale;
+		scale.y = localScale;
+	}
+	
+	private function tweenFunction(s:Enemy, v:Float) { s.localScale = v; }
+	
+	private function shootQueued():Void {
+		
+		while (bulletQueue.length > 0 && bulletQueue[0].activationTime <= TimeMaster.song.time) 
+		{
+			shootSFX.play();
+			
 			var b:Bullet = bulletQueue.shift();
 			b.setPosition(x + shootingPoint.x - b.width / 2, y + shootingPoint.y - b.height / 2);
 			bulletGroup.add(b);
 		}
 		
-		while (movementQueue.length > 0 && movementQueue[0].activationTime <= FlxG.sound.music.time) {
+	}
+	
+	private function moveQueued():Void {
+		
+		while (movementQueue.length > 0 && movementQueue[0].activationTime <= TimeMaster.song.time) {
 			var m:MovementStep = movementQueue.shift();
 			var p:FlxPoint = new FlxPoint();
 			switch(m.x) {
@@ -86,9 +117,18 @@ class Enemy extends FlxSprite
 				default:
 					p.y = Std.parseFloat(m.y) - height / 2;
 			}
-			
-			FlxTween.tween(this, { x:p.x, y:p.y }, m.duration / 1000, { type:FlxTween.ONESHOT, ease:FlxEase.cubeInOut } );
+			switch (m.type)
+			{
+				case "normal":
+					FlxTween.tween(this, { x:p.x, y:p.y }, m.duration / 1000, { type:FlxTween.ONESHOT } );
+				case "reposition":
+					FlxTween.tween(this, { x:p.x, y:p.y }, m.duration / 1000, { type:FlxTween.ONESHOT, ease:FlxEase.cubeInOut } );
+			}
 		}
+		
+	}
+	
+	private function animateQueued():Void {
 		
 		if (chargeAnim.alive)
 		{
@@ -97,12 +137,11 @@ class Enemy extends FlxSprite
 		}
 		
 		
-		while (chargeQueue.length > 0 && chargeQueue[0] <= FlxG.sound.music.time) {
+		while (chargeQueue.length > 0 && chargeQueue[0] <= TimeMaster.song.time) {
 			chargeQueue.shift();
 			chargeAnim.revive();
 			chargeAnim.animation.play("charge1");
-			FlxG.sound.play("assets/sounds/charge.wav", 1.1, false, false);
-			trace("wat");
+			chargeSFX.play();
 		}
 	}
 	
@@ -114,6 +153,20 @@ class Enemy extends FlxSprite
 		return chargeAnim;
 	}
 	
+	public function get_localScale():Float	{
+		return localScale;
+	}
 	
+	public function get_shootSFX():FlxSound	{
+		return shootSFX;
+	}
+	
+	public function get_hurtSFX():FlxSound	{
+		return hurtSFX;
+	}
+	
+	public function get_chargeSFX():FlxSound	{
+		return chargeSFX;
+	}
 	
 }

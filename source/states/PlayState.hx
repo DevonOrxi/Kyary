@@ -4,17 +4,23 @@ import entities.Bullet;
 import entities.Enemy;
 import entities.Player;
 import managers.TimeMaster;
+import managers.QueueManager;
 
 import flixel.addons.display.FlxBackdrop;
-import flixel.addons.plugin.screengrab.FlxScreenGrab;
+//import flixel.addons.plugin.screengrab.FlxScreenGrab;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.ui.FlxBar;
 import flixel.addons.effects.FlxTrail;
+import flixel.tweens.FlxTween;
+import flixel.effects.particles.FlxEmitterExt;
+import flixel.effects.particles.FlxParticle;
+import openfl.system.System;
 
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -25,14 +31,20 @@ import openfl.Assets;
  */
 class PlayState extends FlxState
 {	
+	private var music:FlxSound;
+	
 	private var overlay:FlxSprite;	
 	private var background:FlxBackdrop;
 	private var enemyLifeBar:FlxBar;
+	private var enemyID:FlxSprite;
+	private var playerLifeBar:FlxBar;
+	private var playerID:FlxSprite;	
 	
 	private var player:Player;
 	private var enemy:Enemy;
 	private var enemyTrail:FlxTrail;
 	private var enemyBlur:FlxSprite;
+	private var playerExplosion:FlxEmitterExt;
 	
 	private var data:Xml;
 	private var fastData:Fast;
@@ -42,7 +54,7 @@ class PlayState extends FlxState
 		
 		super.create();
 		
-		FlxScreenGrab.defineHotKeys(["F1"], true, true);
+		//FlxScreenGrab.defineHotKeys(["F1"], true, true);
 		
 		//	Load up the xml containing the level patterns
 		var data = Xml.parse(Assets.getText("assets/data/level.xml"));
@@ -55,30 +67,60 @@ class PlayState extends FlxState
 		
 		
 		//	Play that funky music, white boy
-		FlxG.sound.playMusic("assets/music/music.wav", 1);
-		
+		music = FlxG.sound.load("assets/music/music.ogg", 1, false);
+		TimeMaster.song = music;
+		music.play();
 		
 		//	Initialize time variables
 		TimeMaster.init();
+		QueueManager.init(fast);
 		
 		
 		//	Setup the player and the boss
-		enemy = new Enemy(0, 0, fast.node.enemy);
+		enemy = new Enemy();
 		player = new Player();
 		
 		
 		//	Setup a temporal image to get bar proportions...
-		var temp:FlxSprite = new FlxSprite(0, 0, "assets/images/bar_empty.png");
+		var eb:FlxSprite = new FlxSprite(0, 0, "assets/images/bar_empty.png");
 		
 		//	... then create and set the life bar up.
-		enemyLifeBar = new FlxBar( FlxG.width - temp.width, FlxG.height, FlxBar.FILL_LEFT_TO_RIGHT, Math.floor(temp.width), Math.floor(temp.height), enemy, "health");// , 0, GC.enemyMaxHealth);
-		enemyLifeBar.createImageBar(null, "assets/images/bar_full.png",0x000000);
-		//enemyLifeBar.createGradientBar([0xFF2a2828], [0xFF16EE5d,0xFFEEBE16,0xFF920000,0xFFEEBE16,0xFF16EE5d], 1, 180, true);
-		enemyLifeBar.y -= enemyLifeBar.height;
+		enemyLifeBar = new FlxBar( 375, 333, FlxBar.FILL_LEFT_TO_RIGHT, Math.floor(eb.width), Math.floor(eb.height), enemy, "health");// , 0, GC.enemyMaxHealth);
+		enemyLifeBar.createImageBar(null, "assets/images/bar_full.png", 0x0);
 		
-		//	Justin Case.
-		temp.destroy();
+		eb.x = enemyLifeBar.x;
+		eb.y = enemyLifeBar.y;
 		
+		enemyID = new FlxSprite(598, 321, "assets/images/enemyID.png");
+		
+		playerID = new FlxSprite(8, 9, "assets/images/playerID.png");
+		playerLifeBar = new FlxBar(47, 17, FlxBar.FILL_LEFT_TO_RIGHT, 69, 17, player, "health", 0, 3);
+		playerLifeBar.createImageBar(null, "assets/images/life.png", 0x0);
+		
+		playerExplosion = new FlxEmitterExt();
+		playerExplosion.setMotion(0, 5, 0.2, 360, 200, 1.8);
+		
+		var tempParticle:FlxParticle;
+		for (i in 0...30) {
+			tempParticle = new FlxParticle();
+			tempParticle.makeGraphic(2, 2, 0xDDF92FBA);
+			playerExplosion.add(tempParticle);			
+			
+			tempParticle = new FlxParticle();
+			tempParticle.makeGraphic(2, 2, 0xDDFF66EB);
+			playerExplosion.add(tempParticle);
+			
+			tempParticle = new FlxParticle();
+			tempParticle.makeGraphic(2, 2, 0xDDFFB4FF);
+			playerExplosion.add(tempParticle);
+			
+			tempParticle = new FlxParticle();
+			tempParticle.makeGraphic(2, 2, 0xDDFFFFFF);
+			playerExplosion.add(tempParticle);
+		}
+		
+		
+		//	Trail effect for the boss
 		enemyTrail = new FlxTrail(enemy, "assets/images/boxx_nb.png", 8, 5, 0.4, 0.05);
 		//enemyBlur = new FlxSprite(enemy.x, enemy.y, "assets/images/boxx_b.png");
 		
@@ -88,11 +130,17 @@ class PlayState extends FlxState
 		//add(enemyBlur);
 		add(enemy);
 		add(player);
+		add(player.heart);
+		add(playerExplosion);
 		add(player.bulletGroup);
+		add(player.shotAnim);
 		add(enemy.chargeAnim);
 		add(enemy.bulletGroup);
-		add(new FlxSprite(enemyLifeBar.x, enemyLifeBar.y, "assets/images/bar_empty.png"));
+		add(eb);
 		add(enemyLifeBar);
+		add(enemyID);
+		add(playerID);
+		add(playerLifeBar);
 		
 		/*
 		add(new FlxText(0, 0, 0, "PROTOTYPE"));		
@@ -120,8 +168,8 @@ class PlayState extends FlxState
 		//enemyBlur.y = enemy.y;		
 		
 		//	F1 takes a screenshot for you to save wherever you want
-		if (FlxG.keys.justPressed.F1)
-			FlxScreenGrab.grab();
+		/*if (FlxG.keys.justPressed.F1)
+			FlxScreenGrab.grab(null,true,true);*/
 		
 		//	Update the time variables
 		TimeMaster.update();
@@ -129,6 +177,8 @@ class PlayState extends FlxState
 		//	Check for collision between bullets and other entities
 		checkBulletCollision();			
 		
+		if (FlxG.keys.pressed.Q)
+			System.exit(0);
 		
 		/*
 		testText.text = TimeMaster.currentBar + "." + TimeMaster.currentBeat;
@@ -139,6 +189,7 @@ class PlayState extends FlxState
 			trace("Counter time: " + testCounter);
 			trace("Beatbar time: " + TimeMaster.beatTime * (TimeMaster.currentBar * TimeMaster.timeSignature + TimeMaster.currentBeat));
 		}*/
+	
 	}
 	
 	//	Checks for collision between bullets and other entities
@@ -151,7 +202,7 @@ class PlayState extends FlxState
 			enemy.color = 0xFFFFFF;
 			
 		//	Player overlap
-		FlxG.overlap(player, enemy.bulletGroup, damagePlayer);
+		FlxG.overlap(player.heart, enemy.bulletGroup, damagePlayer);
 		
 	}
 	
@@ -159,17 +210,27 @@ class PlayState extends FlxState
 	private function damageEnemy(e:Enemy, b:Bullet):Void {
 		
 		player.bulletGroup.remove(b);
-		enemy.health -= GC.playerBulletPower;
-		
-		FlxG.sound.play("assets/sounds/hurt.wav", 1, false, false);
+		enemy.hurt(GC.playerBulletPower);		
+		enemy.hurtSFX.play();
 		
 	}
 	
 	//	Handles player damaging
-	private function damagePlayer(p:Player, b:Bullet):Void {
+	private function damagePlayer(h:FlxSprite, b:Bullet):Void {
+		
+		playerExplosion.x = h.x + h.width / 2;
+		playerExplosion.y = h.y + h.height / 2;
+		playerExplosion.start(true, 2, 0, 400);
 		
 		enemy.bulletGroup.remove(b);
-		player.kill();
 		
+		FlxTween.color(player, 0.25*TimeMaster.beatTime / 1000, 0xFFFFFF, 0xFFFFFF, 1, 0, { type: FlxTween.ONESHOT, complete: playerVanished } );
+		
+		h.kill();
+	}
+	
+	private function playerVanished(tween:FlxTween):Void {
+		player.kill();
+		player.hurt(1);
 	}
 }

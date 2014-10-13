@@ -3,6 +3,7 @@ package entities;
 import flixel.FlxSprite;
 import flixel.util.FlxPoint;
 import flixel.util.FlxAngle;
+import managers.TimeMaster;
 
 /**
  * ...
@@ -24,27 +25,28 @@ class Bullet extends FlxSprite
 		{
 			loadRotatedGraphic("assets/images/shotB.png", 45, -1, true, true);
 			
-			/*width = 6;
-			height = 6;
-			origin.x = -2;
-			origin.y = -2;
-			offset.x = 2;
-			offset.y = 2;*/
+			width = 12;
+			height = 12;
+			centerOffsets();
+			centerOrigin();
 		}
 		
 		velocity.x = GC.playerBulletSpeed;
 		x = X - width / 2;
 		y = Y - height / 2;
 				
-		scale.x = 2;
-		scale.y = 2;
+		//scale.x = 2;
+		//scale.y = 2;
 	}
 	
 	override public function update():Void {
 		super.update();
 		
 		if (!isOnScreen())
-			kill();
+			kill();			
+		
+		//scale.x = TimeMaster.beatScale + (TimeMaster.beatScale-1)*10;
+		//scale.y = TimeMaster.beatScale + (TimeMaster.beatScale-1)*10;
 	}
 	
 	public function get_activationTime():Float {

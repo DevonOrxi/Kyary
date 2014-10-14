@@ -32,6 +32,7 @@ class QueueManager
 		
 		for (step in data.elements) {
 			if (step.name == "bulletFan") {
+				var angle:Float = 0;
 				var b:Bullet;
 				
 				for (i in 0...Std.parseInt(step.att.amount))
@@ -53,14 +54,14 @@ class QueueManager
 							
 							b = new Bullet();
 							
-							b.angle = step.has.angle ? Std.parseFloat(step.att.angle) : 0;
-							b.angle += (step.has.amplitude && step.has.spawners) ?
+							angle = step.has.angle ? Std.parseFloat(step.att.angle) : 180;
+							angle += (step.has.amplitude && step.has.spawners) ?
 									- Std.parseFloat(step.att.amplitude) / 2 + 
 									j * Std.parseFloat(step.att.amplitude) / (Std.parseInt(step.att.spawners) - 1) :
 								0
 							;
 							
-							b.setSpeedDirection(bSpeed);
+							b.setSpeedDirection(bSpeed,angle);
 							
 							
 							//	Calculate bullet activation time
@@ -75,8 +76,8 @@ class QueueManager
 							trace("BulletFan at " + TimeMaster.currentBar + "." + TimeMaster.currentBeat + " has amplitude but no spawners");
 							
 						b = new Bullet();
-						b.angle = step.has.angle ? Std.parseFloat(step.att.angle) : 180;						
-						b.setSpeedDirection(bSpeed);
+						angle = step.has.angle ? Std.parseFloat(step.att.angle) : 180;						
+						b.setSpeedDirection(bSpeed, angle);
 						
 						//	Calculate bullet activation time								
 						b.activationTime = TimeMaster.calculateBeatAmount(i, step) * TimeMaster.beatTime;

@@ -73,12 +73,12 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 		 * 	Just for testing purposes */
 		
 		//trace(currentBar);
-		if (currentBar == 132 && !checker)
+		/*if (currentBar == 132 && !checker)
 		{
 			trace((FlxG.sound.music.time - currentBar * beatTime * timeSignature) / (currentBar * beatTime * timeSignature));
 			checker = true;
 			FlxG.sound.play("assets/sounds/explode.wav");
-		}
+		}*/
 		
 	}
 	

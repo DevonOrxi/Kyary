@@ -20,6 +20,8 @@ import flixel.addons.effects.FlxTrail;
 import flixel.tweens.FlxTween;
 import flixel.effects.particles.FlxEmitterExt;
 import flixel.effects.particles.FlxParticle;
+import flixel.tweens.FlxEase;
+import flixel.util.FlxPoint;
 import openfl.system.System;
 
 import haxe.xml.Fast;
@@ -33,6 +35,8 @@ class PlayState extends FlxState
 {	
 	private var music:FlxSound;
 	
+	private var fightingStarted:Bool = false;
+	
 	private var overlay:FlxSprite;	
 	private var background:FlxBackdrop;
 	private var enemyLifeBar:FlxBar;
@@ -43,7 +47,7 @@ class PlayState extends FlxState
 	private var player:Player;
 	private var enemy:Enemy;
 	private var enemyTrail:FlxTrail;
-	private var enemyBlur:FlxSprite;
+	private var playerTrail:FlxTrail;
 	private var playerExplosion:FlxEmitterExt;
 	
 	private var data:Xml;
@@ -67,9 +71,8 @@ class PlayState extends FlxState
 		
 		
 		//	Play that funky music, white boy
-		music = FlxG.sound.load("assets/music/music.ogg", 1, false);
+		music = FlxG.sound.load("assets/music/music.wav", 1, false);
 		TimeMaster.song = music;
-		music.play();
 		
 		//	Initialize time variables
 		TimeMaster.init();
@@ -78,7 +81,11 @@ class PlayState extends FlxState
 		
 		//	Setup the player and the boss
 		enemy = new Enemy();
+		
 		player = new Player();
+		player.x = -150;
+		player.y = (FlxG.height - player.height) / 2;		
+		FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
 		
 		
 		//	Setup a temporal image to get bar proportions...
@@ -121,12 +128,13 @@ class PlayState extends FlxState
 		
 		
 		//	Trail effect for the boss
-		enemyTrail = new FlxTrail(enemy, "assets/images/boxx_nb.png", 8, 5, 0.4, 0.05);
-		//enemyBlur = new FlxSprite(enemy.x, enemy.y, "assets/images/boxx_b.png");
+		enemyTrail = new FlxTrail(enemy, null, 8, 5, 0.4, 0.05);
+		playerTrail = new FlxTrail(player, null, 8, 5, 0.4, 0.05);
 		
 		//	Add all the stuff to the state
 		add(background);
 		add(enemyTrail);
+		add(playerTrail);
 		//add(enemyBlur);
 		add(enemy);
 		add(player);
@@ -232,5 +240,14 @@ class PlayState extends FlxState
 	private function playerVanished(tween:FlxTween):Void {
 		player.kill();
 		player.hurt(1);
+	}
+	
+	
+
+	private function startFight(tween:FlxTween):Void {
+		fightingStarted = true;
+		player.canPlay = true;
+		playerTrail.kill();
+		music.play();
 	}
 }

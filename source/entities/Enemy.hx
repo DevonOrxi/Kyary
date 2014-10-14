@@ -53,8 +53,9 @@ class Enemy extends FlxSprite
 		health = GC.enemyMaxHealth;
 		shootingPoint = FlxPoint.weak(74, height / 2);
 		
-		x = 380;
+		x = 660;
 		y = (FlxG.height - height) / 2;
+		FlxTween.linearMotion(this, x, y, 380, y, 2, true, { type:FlxTween.ONESHOT, ease:FlxEase.sineOut } );
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
 		bulletQueue = QueueManager.enemyBulletQueue;

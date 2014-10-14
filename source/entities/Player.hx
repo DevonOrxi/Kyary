@@ -19,7 +19,8 @@ class Player extends FlxSprite
 	@:isVar public var shotAnim(get,null):FlxSprite;
 	@:isVar public var heart(get,null):FlxSprite;
 	@:isVar public var hurtSFX(get,null):FlxSound;
-	@:isVar public var shootSFX(get,null):FlxSound;
+	@:isVar public var shootSFX(get, null):FlxSound;
+	public var canPlay:Bool = false;
 	private var isFocused:Bool = false;
 
 	public function new(X:Float=0, Y:Float=0) {
@@ -65,8 +66,6 @@ class Player extends FlxSprite
 		
 		
 		health = GC.playerLives;
-		x = 25;
-		y = (FlxG.height - height) / 2;
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
 	}
@@ -74,22 +73,26 @@ class Player extends FlxSprite
 	override public function update():Void {
 		super.update();
 		
-		shotAnim.x = x + 30 - shotAnim.width / 2;
-		shotAnim.y = y + 18 - shotAnim.height / 2;
-		if (shotAnim.animation.finished)
-			shotAnim.visible = false;
-		
-		heart.x = x + 9;
-		heart.y = y + 16;
-		
-		//	Movement input checking
-		updateMovement();
-		if (isFocused)
-			heart.visible = true;
-		else
-			heart.visible = false;
-		
-		shoot();
+		if (canPlay)
+		{
+			shotAnim.x = x + 30 - shotAnim.width / 2;
+			shotAnim.y = y + 18 - shotAnim.height / 2;
+			if (shotAnim.animation.finished)
+				shotAnim.visible = false;
+			
+			heart.x = x + 9;
+			heart.y = y + 16;
+			
+			//	Movement input checking		
+			updateMovement();		
+			
+			if (isFocused)
+				heart.visible = true;
+			else
+				heart.visible = false;
+			
+			shoot();
+		}
 	}	
 	
 	private function shoot():Void {

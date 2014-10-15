@@ -22,8 +22,8 @@ import flixel.effects.particles.FlxEmitterExt;
 import flixel.effects.particles.FlxParticle;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxPoint;
-import openfl.system.System;
 import flixel.effects.FlxFlicker;
+import flixel.util.FlxRandom;
 
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -37,13 +37,20 @@ class PlayState extends FlxState
 	private var music:FlxSound;
 	
 	private var fightingStarted:Bool = false;
+	private var win:Bool = false;
+	private var lose:Bool = false;
 	
 	private var overlay:FlxSprite;	
-	private var background:FlxBackdrop;
+	private var background4:FlxBackdrop;
+	private var background3:FlxBackdrop;
+	private var background2:FlxBackdrop;
+	private var background1:FlxBackdrop;
 	private var enemyLifeBar:FlxBar;
 	private var enemyID:FlxSprite;
 	private var playerLifeBar:FlxBar;
 	private var playerID:FlxSprite;	
+	private var explosion:FlxSprite;
+	private var explosionSFX:FlxSound;
 	
 	private var player:Player;
 	private var enemy:Enemy;
@@ -67,13 +74,21 @@ class PlayState extends FlxState
 		
 		
 		//	Scrolling background load and init
-		background = new FlxBackdrop("assets/images/backH.png", 1, 1, true, false);
-		background.velocity.x = -100;
+		background4 = new FlxBackdrop("assets/images/backLayer4.png", 1, 1, true, false);
+		background4.velocity.x = -75;
+		background3 = new FlxBackdrop("assets/images/backLayer3.png", 1, 1, true, false);
+		background3.velocity.x = 1.5*background4.velocity.x;
+		background2 = new FlxBackdrop("assets/images/backLayer2.png", 1, 1, true, false);
+		background2.velocity.x = 1.5*background3.velocity.x;
+		background1 = new FlxBackdrop("assets/images/backLayer1.png", 1, 1, true, false);
+		background1.velocity.x = 1.5*background2.velocity.x;
 		
 		
 		//	Play that funky music, white boy
 		music = FlxG.sound.load("assets/music/music.wav", 1, false);
 		TimeMaster.song = music;
+		
+		explosionSFX = FlxG.sound.load("assets/sounds/explode.wav");
 		
 		//	Initialize time variables
 		TimeMaster.init();
@@ -85,8 +100,7 @@ class PlayState extends FlxState
 		
 		player = new Player();
 		player.x = -150;
-		player.y = (FlxG.height - player.height) / 2;		
-		FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
+		player.y = (FlxG.height - player.height) / 2;
 		
 		
 		//	Setup a temporal image to get bar proportions...
@@ -132,8 +146,18 @@ class PlayState extends FlxState
 		enemyTrail = new FlxTrail(enemy, null, 8, 5, 0.4, 0.05);
 		playerTrail = new FlxTrail(player, null, 8, 5, 0.4, 0.05);
 		
+		explosion = new FlxSprite();
+		explosion.loadGraphic("assets/images/explode.png", true, 50, 50);
+		explosion.animation.add("boom", [0, 1, 2], 15, false);
+		explosion.visible = false;
+		
+		FlxG.camera.fade(0xFF000000, 1.5, true, beginGame);
+		
 		//	Add all the stuff to the state
-		add(background);
+		add(background4);
+		add(background3);
+		add(background2);
+		add(background1);
 		add(enemyTrail);
 		add(playerTrail);
 		add(enemy);
@@ -144,6 +168,7 @@ class PlayState extends FlxState
 		add(player.shotAnim);
 		add(enemy.chargeAnim);
 		add(enemy.bulletGroup);
+		add(explosion);
 		add(eb);
 		add(enemyLifeBar);
 		add(enemyID);
@@ -172,19 +197,66 @@ class PlayState extends FlxState
 		
 		super.update();
 		
+		if (!win)
+		{
+			if (player.alive == false)
+			{
+				player.deathCounter += FlxG.elapsed;
+				if (player.deathCounter >= GC.playerDeathCounter)
+				{
+					if (player.health >= 0) {
+						playerTrail.revive();
+						player.x = -150;
+						player.y = (FlxG.height - player.height) / 2;
+						player.revive();
+						player.heart.revive();
+						player.alpha = 1;
+						FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
+						player.flySFX.play();
+						FlxFlicker.flicker(player, TimeMaster.beatTime * 12 / 1000, 0.04, true, false, notGodAnymore);
+					}
+					else if (!lose)
+					{
+						lose = true;
+						FlxG.camera.fade(0xFF000000, 4, false, goToMenu);
+					}
+				}
+			}
+			
+			
+			//	F1 takes a screenshot for you to save wherever you want
+			/*if (FlxG.keys.justPressed.F1)
+				FlxScreenGrab.grab(null,true,true);*/
+			
+			//	Update the time variables
+			TimeMaster.update();
+			
+			//	Check for collision between bullets and other entities
+			checkBulletCollision();
 		
-		//	F1 takes a screenshot for you to save wherever you want
-		/*if (FlxG.keys.justPressed.F1)
-			FlxScreenGrab.grab(null,true,true);*/
+		}
+		else  {
+			player.deathCounter += FlxG.elapsed;
+			if (player.deathCounter >= GC.playerDeathCounter*2)
+				FlxG.camera.fade(0xFFFFFFFF, 4, false, goToCredits);
+			
+			if(explosion.animation.finished) {
+				explosion.x = FlxRandom.floatRanged(enemy.x - explosion.width / 2, enemy.x + enemy.width - explosion.width / 2);
+				explosion.y = FlxRandom.floatRanged(enemy.y - explosion.height / 2, enemy.y + enemy.height - explosion.height / 2);
+				explosion.animation.play("boom");
+				explosionSFX.play(true);
+			}
+		}
 		
-		//	Update the time variables
-		TimeMaster.update();
-		
-		//	Check for collision between bullets and other entities
-		checkBulletCollision();			
-		
-		if (FlxG.keys.pressed.Q)
-			System.exit(0);
+		if (TimeMaster.currentBar == 132 && !lose)
+		{
+			
+			player.canPlay = false;
+			player.isGod = true;
+			lose = true;
+			FlxTween.linearMotion(enemy, enemy.x, enemy.y, 700, enemy.y, 2, true, { type:FlxTween.ONESHOT, ease:FlxEase.sineOut } );
+			FlxG.camera.fade(0xFF000000, 4, false, goToMenu);
+		}
 		
 		/*
 		testText.text = TimeMaster.currentBar + "." + TimeMaster.currentBeat;
@@ -208,7 +280,7 @@ class PlayState extends FlxState
 			enemy.color = 0xFFFFFF;
 			
 		//	Player overlap
-		if(!player.isGod)
+		if (!player.isGod)
 			FlxG.overlap(player.heart, enemy.bulletGroup, damagePlayer);
 		
 	}
@@ -220,6 +292,19 @@ class PlayState extends FlxState
 		enemy.health -= GC.playerBulletPower;		
 		enemy.hurtSFX.play();
 		
+			
+		if (enemy.health <= 0 && !win)
+		{
+			win = true;
+			player.canPlay = false;
+			explosion.x = FlxRandom.floatRanged(enemy.x - explosion.width / 2, enemy.x + enemy.width - explosion.width / 2);
+			explosion.y = FlxRandom.floatRanged(enemy.y - explosion.height / 2, enemy.y + enemy.height - explosion.height / 2);
+			explosion.visible = true;
+			explosion.animation.play("boom");
+			explosionSFX.play(true);
+			music.pause();
+		}
+		
 	}
 	
 	//	Handles player damaging
@@ -229,6 +314,7 @@ class PlayState extends FlxState
 		playerExplosion.x = h.x + h.width / 2;
 		playerExplosion.y = h.y + h.height / 2;
 		playerExplosion.start(true, 2, 0, 400);
+		player.hurtSFX.play();
 		
 		enemy.bulletGroup.remove(b);
 		
@@ -240,25 +326,17 @@ class PlayState extends FlxState
 	private function playerVanished(tween:FlxTween):Void {
 		player.kill();
 		player.health--;
-		trace(player.health);
-		if(player.health > 0) {
-			playerTrail.revive();
-			player.x = -150;
-			player.y = (FlxG.height - player.height) / 2;
-			player.revive();
-			player.heart.revive();
-			player.alpha = 1;
-			FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
-			FlxFlicker.flicker(player, TimeMaster.beatTime * 12 / 1000, 0.04, true, false, notGodAnymore);
-		}
-		else
-		{
-			trace("GAME OVER WACHO");
-		}
+		player.deathCounter = 0;
 	}
 	
-	private function notGodAnymore(f:FlxFlicker) {
+	private function notGodAnymore(f:FlxFlicker):Void {
 		player.isGod = false;
+	}
+	
+	private function beginGame():Void {
+		FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
+		player.flySFX.play();
+		FlxTween.linearMotion(enemy, enemy.x, enemy.y, 380, enemy.y, 2, true, { type:FlxTween.ONESHOT, ease:FlxEase.sineOut } );
 	}
 
 	private function startFight(tween:FlxTween):Void {
@@ -268,5 +346,13 @@ class PlayState extends FlxState
 		}
 		player.canPlay = true;
 		playerTrail.kill();
+	}
+	
+	private function goToMenu():Void {
+		FlxG.switchState(new MenuState());
+	}
+	
+	private function goToCredits():Void {
+		FlxG.switchState(new CreditState());
 	}
 }

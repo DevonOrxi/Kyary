@@ -55,7 +55,6 @@ class Enemy extends FlxSprite
 		
 		x = 660;
 		y = (FlxG.height - height) / 2;
-		FlxTween.linearMotion(this, x, y, 380, y, 2, true, { type:FlxTween.ONESHOT, ease:FlxEase.sineOut } );
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
 		bulletQueue = QueueManager.enemyBulletQueue;
@@ -68,9 +67,11 @@ class Enemy extends FlxSprite
 		
 		super.update();
 		
-		shootQueued();
-		moveQueued();
-		animateQueued();
+		if (health > 0) {
+			shootQueued();
+			moveQueued();
+			animateQueued();
+		}
 		
 		if (TimeMaster.isBeat)
 		{

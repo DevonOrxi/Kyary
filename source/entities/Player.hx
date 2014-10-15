@@ -23,6 +23,7 @@ class Player extends FlxSprite
 	@:isVar public var flySFX(get, null):FlxSound;
 	public var canPlay:Bool = false;
 	public var isGod:Bool = false;
+	public var deathCounter:Float = 0;
 	private var isFocused:Bool = false;
 
 	public function new(X:Float=0, Y:Float=0) {
@@ -100,7 +101,7 @@ class Player extends FlxSprite
 	
 	private function shoot():Void {
 		//	Shoot when Z is pressed AND the beat is on
-		if (FlxG.keys.pressed.Z && TimeMaster.isBeat)
+		if ((FlxG.keys.pressed.Z || FlxG.keys.pressed.SPACE) && TimeMaster.isBeat)
 		{
 			bulletGroup.add(new Bullet(x + 30, y + 18, "assets/images/shot-2big.png"));
 			shootSFX.play();
@@ -115,19 +116,19 @@ class Player extends FlxSprite
 		velocity.y = 0;
 		
 		//	Left-right input
-		if (FlxG.keys.pressed.LEFT && FlxG.keys.pressed.RIGHT)
+		if ((FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A) && (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D))
 			velocity.x = 0;
-		else if (FlxG.keys.pressed.LEFT)
+		else if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A)
 			velocity.x = -GC.playerSpeed;
-		else if (FlxG.keys.pressed.RIGHT)
+		else if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D)
 			velocity.x = GC.playerSpeed;
 			
 		//	Up-down input
-		if (FlxG.keys.pressed.UP && FlxG.keys.pressed.DOWN)
+		if ((FlxG.keys.pressed.UP || FlxG.keys.pressed.W) && (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S))
 			velocity.y = 0;
-		else if (FlxG.keys.pressed.UP)
+		else if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W)
 			velocity.y = -GC.playerSpeed;
-		else if (FlxG.keys.pressed.DOWN)
+		else if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S)
 			velocity.y = GC.playerSpeed;
 		
 		//	Hardcoded diagonal speed

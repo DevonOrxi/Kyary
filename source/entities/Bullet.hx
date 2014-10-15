@@ -19,16 +19,16 @@ class Bullet extends FlxSprite
 		
 		if (graphic != null)
 		{
-			loadRotatedGraphic(graphic, 45, -1, true, true);
+			loadGraphic(graphic);
 		}
 		else
 		{
-			loadRotatedGraphic("assets/images/shotB.png", 45, -1, true, true);
+			loadGraphic("assets/images/shotB.png");
 			
-			width = 12;
+			/*width = 12;
 			height = 12;
 			centerOffsets();
-			centerOrigin();
+			centerOrigin();*/
 		}
 		
 		velocity.x = GC.playerBulletSpeed;

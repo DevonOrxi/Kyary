@@ -1,6 +1,7 @@
 <data>
 	<charge bar="1" beat="4"></charge>
-	<bulletFan bar="2" beat="2" speed="250" speedFrom="400" angle="180" amplitude="60" spawners="6" amount="6" interval="0" >  spawnerInterval="0.5"</bulletFan>
+	
+	<bulletFan bar="2" beat="2" speed="250" speedFrom="400" angle="180" amplitude="60" spawners="6" amount="6" interval="0" ></bulletFan>
 	<move type="reposition" bar="2" beat="3" y="120" duration="2"></move>
 	<charge bar="2" beat="4"></charge>
 	<bulletFan bar="3" beat="2" speed="250" speedFrom="400" angle="180" amplitude="60" spawners="6" amount="6" interval="0" ></bulletFan>
@@ -30,8 +31,48 @@
 	<bulletFan bar="12" beat="1" speed="200" angle="180" amplitude="60" spawners="4" amount="8" interval="0.5" ></bulletFan>
 	<move type="normal" bar="12" beat="1" y="center" duration="4"></move>
 	<bulletFan bar="13" beat="1" speed="200" angle="180" amplitude="360" spawners="20" amount="2" interval="1" ></bulletFan>
-	<bulletFan bar="13" beat="3" speed="200" angle="185" amplitude="360" spawners="20" amount="4" interval="0.5" ></bulletFan>
+	<bulletFan bar="13" beat="3" speed="200" angle="185" amplitude="360" spawners="20" amount="3" interval="0.5" ></bulletFan>
+	<charge bar="13" beat="4" ></charge>	
 	
+	<bulletFan bar="14" beat="1" speed="150" angle="200" amplitude="45" spawners="16" amount="1" interval="0" spawnerInterval="0.25" spawnerDirection="ccw"  ></bulletFan>
+	<bulletFan bar="15" beat="1" speed="150" angle="160" amplitude="45" spawners="16" amount="1" interval="0" spawnerInterval="0.25" spawnerDirection="cw"  ></bulletFan>
+	<bulletFan bar="16" beat="1" speed="150" angle="200" amplitude="45" spawners="16" amount="1" interval="0" spawnerInterval="0.25" spawnerDirection="ccw"  ></bulletFan>	
+	<bulletFan bar="17" beat="1" speed="150" angle="185" amplitude="360" spawners="18" amount="2" interval="1.5" ></bulletFan>
 	
+	<move type="reposition" bar="18" beat="1" x = "340" y="120" duration="1"></move>
+	<bulletFan bar="18" beat="2" speed="200" angle="180" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	<move type="reposition" bar="18" beat="4.5" x = "340" y="240" duration="1"></move>
+	<bulletFan bar="19" beat="1.5" speed="200" angle="180" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	<move type="reposition" bar="20" beat="1" x = "340" y="center" duration="1"></move>	
+	<bulletFan bar="20" beat="2" speed="200" angle="180" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	<move type="reposition" bar="20" beat="4.5" x = "495" y="center" duration="1"></move>	
+	<bulletFan bar="21" beat="1.5" speed="200" angle="180" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	
+	<bulletFan bar="22" beat="1" speed="150" angle="200" amplitude="45" spawners="16" amount="1" interval="0" spawnerInterval="0.25" spawnerDirection="ccw"  ></bulletFan>
+	<bulletFan bar="23" beat="1" speed="150" angle="160" amplitude="45" spawners="16" amount="1" interval="0" spawnerInterval="0.25" spawnerDirection="cw"  ></bulletFan>
+	<bulletFan bar="24" beat="1" speed="150" angle="200" amplitude="45" spawners="16" amount="1" interval="0" spawnerInterval="0.25" spawnerDirection="ccw"  ></bulletFan>	
+	<bulletFan bar="25" beat="1" speed="100" speedFrom="150" angle="180" amplitude="60" spawners="4" amount="4" interval="0" ></bulletFan>
+	<bulletFan bar="25" beat="2.5" speed="100" speedFrom="150" angle="180" amplitude="60" spawners="5" amount="4" interval="0" ></bulletFan>
+	
+	<move type="reposition" bar="26" beat="1" x = "center" y="120" duration="1"></move>
+	<bulletFan bar="26" beat="2" speed="200" angle="180" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	<move type="reposition" bar="26" beat="4.5" x = "center" y="240" duration="1"></move>
+	<bulletFan bar="27" beat="1.5" speed="200" angle="180" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	<move type="reposition" bar="28" beat="1" x = "center" y="center" duration="1"></move>
+	<bulletFan bar="28" beat="2" speed="200" angle="180" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	<move type="reposition" bar="28" beat="4.5" x = "495" y="center" duration="1"></move>	
+	<bulletFan bar="29" beat="1.5" speed="200" angle="185" amplitude="360" spawners="24" amount="2" interval="0.5" ></bulletFan>
+	<charge bar="29" beat="3.5" ></charge>
+	<move type="reposition" bar="29" beat="4" x = "495" y="center" duration="1"></move>
+	
+	<bulletFan bar="30" beat="1" speed="250" angle="195" amplitude="360" spawners="12" amount="2" interval="1.5" ></bulletFan>
+	<bulletFan bar="30" beat="3" speed="150" speedFrom="200" angle="180" amplitude="360" spawners="12" amount="3" interval="0" ></bulletFan>
+	<bulletFan bar="30" beat="4" speed="250" angle="195" amplitude="360" spawners="12" amount="1" interval="0" ></bulletFan>
+	<bulletFan bar="31" beat="1" speed="250" angle="195" amplitude="360" spawners="12" amount="3" interval="0.75" ></bulletFan>
+	<bulletFan bar="31" beat="3" speed="150" speedFrom="200" angle="180" amplitude="360" spawners="12" amount="3" interval="0" ></bulletFan>
+
+	
+
+
 	
 </data>

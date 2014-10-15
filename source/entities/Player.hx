@@ -20,14 +20,17 @@ class Player extends FlxSprite
 	@:isVar public var heart(get,null):FlxSprite;
 	@:isVar public var hurtSFX(get,null):FlxSound;
 	@:isVar public var shootSFX(get, null):FlxSound;
+	@:isVar public var flySFX(get, null):FlxSound;
 	public var canPlay:Bool = false;
+	public var isGod:Bool = false;
 	private var isFocused:Bool = false;
 
 	public function new(X:Float=0, Y:Float=0) {
 		super(X, Y);		
 		
-		hurtSFX = FlxG.sound.load("assets/sounds/explode.wav", 1, false);
+		hurtSFX = FlxG.sound.load("assets/sounds/death2.wav", 0.8, false);
 		shootSFX = FlxG.sound.load("assets/sounds/shoot.wav", 1, false);
+		flySFX = FlxG.sound.load("assets/sounds/fly.wav", 1, false);
 		
 		var tex:TexturePackerData = new TexturePackerData("assets/data/kyary.json", "assets/images/kyary.png");
 		loadGraphicFromTexture(tex);
@@ -174,6 +177,10 @@ class Player extends FlxSprite
 	
 	public function get_hurtSFX():FlxSound	{
 		return hurtSFX;
+	}
+	
+	public function get_flySFX():FlxSound	{
+		return flySFX;
 	}
 	
 }

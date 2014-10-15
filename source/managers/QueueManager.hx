@@ -1,5 +1,6 @@
 package managers;
 
+import haxe.ds.ArraySort;
 import haxe.xml.Fast;
 import entities.Bullet;
 import managers.MovementStep;
@@ -54,10 +55,15 @@ class QueueManager
 							
 							b = new Bullet();
 							
+							var adj:Int = step.att.amplitude == "360" ? 1 : 0;
+							var ccwAdj:Int = (step.has.spawnerDirection && step.att.spawnerDirection == "ccw") ? -1 : 1;
+							
 							angle = step.has.angle ? Std.parseFloat(step.att.angle) : 180;
-							angle += (step.has.amplitude && step.has.spawners) ?
+							angle += (step.has.amplitude && step.has.spawners) ? 
+								ccwAdj * (									
 									- Std.parseFloat(step.att.amplitude) / 2 + 
-									j * Std.parseFloat(step.att.amplitude) / (Std.parseInt(step.att.spawners) - 1) :
+									j * Std.parseFloat(step.att.amplitude) / (Std.parseInt(step.att.spawners) - 1 + adj)
+								) :
 								0
 							;
 							
@@ -65,8 +71,18 @@ class QueueManager
 							
 							
 							//	Calculate bullet activation time
-							b.activationTime = TimeMaster.calculateBeatAmount(i, step) * TimeMaster.beatTime;
+							var spawnerTime:Float;
+							if (step.has.spawnerInterval)
+								spawnerTime = step.att.spawnerInterval == "auto" ? 
+									TimeMaster.beatTime / Std.parseInt(step.att.spawners) :
+									Std.parseFloat(step.att.spawnerInterval) * TimeMaster.beatTime
+								;
+							else 
+								spawnerTime = 0;
 							
+							var activationTime:Float = TimeMaster.calculateBeatAmount(i, step) * TimeMaster.beatTime;
+							b.activationTime = activationTime + spawnerTime * j;
+								
 							enemyBulletQueue.push(b);
 							
 						}
@@ -85,6 +101,11 @@ class QueueManager
 						enemyBulletQueue.push(b);
 					}
 				}
+				enemyBulletQueue.sort( function(a:Bullet, b:Bullet):Int {
+					if (a.activationTime < b.activationTime) return -1;
+					if (a.activationTime > b.activationTime) return 1;
+					return 0;
+				} );
 			}
 			
 			if (step.name == "move") {
@@ -103,5 +124,5 @@ class QueueManager
 				enemyChargeQueue.push((step.has.bar && step.has.beat) ? TimeMaster.calculateBeatAmount(0, step) * TimeMaster.beatTime : 0);
 			}
 		}
-	}	
+	}
 }

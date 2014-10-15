@@ -23,6 +23,7 @@ import flixel.effects.particles.FlxParticle;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxPoint;
 import openfl.system.System;
+import flixel.effects.FlxFlicker;
 
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -135,7 +136,6 @@ class PlayState extends FlxState
 		add(background);
 		add(enemyTrail);
 		add(playerTrail);
-		//add(enemyBlur);
 		add(enemy);
 		add(player);
 		add(player.heart);
@@ -172,8 +172,6 @@ class PlayState extends FlxState
 		
 		super.update();
 		
-		//enemyBlur.x = enemy.x;
-		//enemyBlur.y = enemy.y;		
 		
 		//	F1 takes a screenshot for you to save wherever you want
 		/*if (FlxG.keys.justPressed.F1)
@@ -210,7 +208,8 @@ class PlayState extends FlxState
 			enemy.color = 0xFFFFFF;
 			
 		//	Player overlap
-		FlxG.overlap(player.heart, enemy.bulletGroup, damagePlayer);
+		if(!player.isGod)
+			FlxG.overlap(player.heart, enemy.bulletGroup, damagePlayer);
 		
 	}
 	
@@ -218,14 +217,15 @@ class PlayState extends FlxState
 	private function damageEnemy(e:Enemy, b:Bullet):Void {
 		
 		player.bulletGroup.remove(b);
-		enemy.hurt(GC.playerBulletPower);		
+		enemy.health -= GC.playerBulletPower;		
 		enemy.hurtSFX.play();
 		
 	}
 	
 	//	Handles player damaging
 	private function damagePlayer(h:FlxSprite, b:Bullet):Void {
-		
+		player.isGod = true;
+		player.canPlay = false;
 		playerExplosion.x = h.x + h.width / 2;
 		playerExplosion.y = h.y + h.height / 2;
 		playerExplosion.start(true, 2, 0, 400);
@@ -239,15 +239,34 @@ class PlayState extends FlxState
 	
 	private function playerVanished(tween:FlxTween):Void {
 		player.kill();
-		player.hurt(1);
+		player.health--;
+		trace(player.health);
+		if(player.health > 0) {
+			playerTrail.revive();
+			player.x = -150;
+			player.y = (FlxG.height - player.height) / 2;
+			player.revive();
+			player.heart.revive();
+			player.alpha = 1;
+			FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
+			FlxFlicker.flicker(player, TimeMaster.beatTime * 12 / 1000, 0.04, true, false, notGodAnymore);
+		}
+		else
+		{
+			trace("GAME OVER WACHO");
+		}
 	}
 	
-	
+	private function notGodAnymore(f:FlxFlicker) {
+		player.isGod = false;
+	}
 
 	private function startFight(tween:FlxTween):Void {
-		fightingStarted = true;
+		if(!fightingStarted) {
+			fightingStarted = true;
+			music.play();
+		}
 		player.canPlay = true;
 		playerTrail.kill();
-		music.play();
 	}
 }

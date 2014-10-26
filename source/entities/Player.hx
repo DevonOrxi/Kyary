@@ -4,6 +4,8 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.group.FlxTypedGroup;
 import flixel.util.loaders.TexturePackerData;
+import flixel.input.gamepad.FlxGamepad;
+import flixel.input.gamepad.XboxButtonID;
 import flixel.tweens.FlxTween;
 import flixel.system.FlxSound;
 import managers.TimeMaster;
@@ -101,53 +103,111 @@ class Player extends FlxSprite
 	
 	private function shoot():Void {
 		//	Shoot when Z is pressed AND the beat is on
-		if ((FlxG.keys.pressed.Z || FlxG.keys.pressed.SPACE) && TimeMaster.isBeat)
-		{
-			bulletGroup.add(new Bullet(x + 30, y + 18, "assets/images/shot-2big.png"));
-			shootSFX.play();
-			shotAnim.animation.play("shoot", true);
-			shotAnim.visible = true;
+		if (Reg.gamePad == null) {
+			if ((FlxG.keys.pressed.Z || FlxG.keys.pressed.SPACE) && TimeMaster.isBeat)
+			{
+				bulletGroup.add(new Bullet(x + 30, y + 18, "assets/images/shot-2big.png"));
+				shootSFX.play();
+				shotAnim.animation.play("shoot", true);
+				shotAnim.visible = true;
+			}
+		}
+		else {
+			if (Reg.gamePad.pressed(XboxButtonID.A) && TimeMaster.isBeat)
+			{
+				bulletGroup.add(new Bullet(x + 30, y + 18, "assets/images/shot-2big.png"));
+				shootSFX.play();
+				shotAnim.animation.play("shoot", true);
+				shotAnim.visible = true;
+			}
 		}
 	}
 	
 	//	Movement input checking
-	private function updateMovement():Void {		
+	private function updateMovement():Void {
 		velocity.x = 0;
 		velocity.y = 0;
 		
 		//	Left-right input
-		if ((FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A) && (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D))
-			velocity.x = 0;
-		else if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A)
-			velocity.x = -GC.playerSpeed;
-		else if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D)
-			velocity.x = GC.playerSpeed;
+		Reg.gamePad = FlxG.gamepads.lastActive;
+		
+		if (Reg.gamePad != null) {
 			
-		//	Up-down input
-		if ((FlxG.keys.pressed.UP || FlxG.keys.pressed.W) && (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S))
-			velocity.y = 0;
-		else if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W)
-			velocity.y = -GC.playerSpeed;
-		else if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S)
-			velocity.y = GC.playerSpeed;
-		
-		//	Hardcoded diagonal speed
-		//  "Hardcoded" means "good"
-		if (velocity.x != 0 && velocity.y != 0)
-		{
-			velocity.x *= 0.707;
-			velocity.y *= 0.707;
+			if (Reg.gamePad.getXAxis(XboxButtonID.LEFT_ANALOGUE_X) >= -0.1 && Reg.gamePad.getXAxis(XboxButtonID.LEFT_ANALOGUE_X) <= 0.1) {
+					if (Reg.gamePad.pressed(XboxButtonID.DPAD_LEFT) && Reg.gamePad.pressed(XboxButtonID.DPAD_RIGHT)) {
+						velocity.x = 0;
+					}
+					else {
+						if (Reg.gamePad.pressed(XboxButtonID.DPAD_LEFT))
+							velocity.x = -GC.playerSpeed;
+						else if (Reg.gamePad.pressed(XboxButtonID.DPAD_RIGHT))
+							velocity.x = GC.playerSpeed;
+					}
+			}
+			else
+				velocity.x = GC.playerSpeed * Reg.gamePad.getXAxis(XboxButtonID.LEFT_ANALOGUE_X);
+				
+			if (Reg.gamePad.getYAxis(XboxButtonID.LEFT_ANALOGUE_Y) >= -0.1 && Reg.gamePad.getYAxis(XboxButtonID.LEFT_ANALOGUE_Y) <= 0.1) {
+				if (Reg.gamePad.pressed(XboxButtonID.DPAD_DOWN) && Reg.gamePad.pressed(XboxButtonID.DPAD_UP)) {
+					velocity.y = 0;
+				}
+				else {
+					if (Reg.gamePad.pressed(XboxButtonID.DPAD_UP))
+						velocity.y = -GC.playerSpeed;
+					else if (Reg.gamePad.pressed(XboxButtonID.DPAD_DOWN))
+						velocity.y = GC.playerSpeed;
+				}
+			}
+			else
+			{
+				velocity.y = GC.playerSpeed * Reg.gamePad.getYAxis(XboxButtonID.LEFT_ANALOGUE_Y);
+			}
+			//	Focus mode
+			if (Reg.gamePad.pressed(XboxButtonID.X))
+			{
+				isFocused = true;
+				velocity.x *= 0.5;
+				velocity.y *= 0.5;
+			}
+			else
+				isFocused = false;
+
 		}
+		else {
+			
+			if ((FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A) && (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D))
+				velocity.x = 0;
+			else if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A)
+				velocity.x = -GC.playerSpeed;
+			else if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D)
+				velocity.x = GC.playerSpeed;
+				
+			if ((FlxG.keys.pressed.UP || FlxG.keys.pressed.W) && (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S))
+				velocity.y = 0;
+			else if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W)
+				velocity.y = -GC.playerSpeed;
+			else if (FlxG.keys.pressed.DOWN || FlxG.keys.pressed.S)
+				velocity.y = GC.playerSpeed;
+			
+			
+			//	Hardcoded diagonal speed
+			//  "Hardcoded" means "good"
+			if (velocity.x != 0 && velocity.y != 0)
+			{
+				velocity.x *= 0.707;
+				velocity.y *= 0.707;
+			}
 		
-		//	Focus mode
-		if (FlxG.keys.pressed.SHIFT)
-		{
-			isFocused = true;
-			velocity.x *= 0.5;
-			velocity.y *= 0.5;
+			//	Focus mode
+			if (FlxG.keys.pressed.SHIFT)
+			{
+				isFocused = true;
+				velocity.x *= 0.5;
+				velocity.y *= 0.5;
+			}
+			else
+				isFocused = false;
 		}
-		else
-			isFocused = false;
 		
 		//	OOB checking
 		if (x < 0)

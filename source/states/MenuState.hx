@@ -6,6 +6,8 @@ import flixel.effects.particles.FlxParticle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.input.gamepad.FlxGamepad;
+import flixel.input.gamepad.XboxButtonID;
 import flixel.system.FlxSound;
 import openfl.system.System;
 
@@ -15,6 +17,7 @@ import openfl.system.System;
 class MenuState extends FlxState
 {
 	private var canTouch:Bool = false;
+	private var canMove:Bool = false;
 	private var explodeSFX:FlxSound;
 	private var selectSFX:FlxSound;
 	private var startSFX:FlxSound;
@@ -31,6 +34,7 @@ class MenuState extends FlxState
 	private var creditsOff:FlxSprite;
 	private var playOn:FlxSprite;
 	private var playOff:FlxSprite;
+	private var _gamePad:FlxGamepad;
 	
 	override public function create():Void
 	{
@@ -124,6 +128,9 @@ class MenuState extends FlxState
 		titleMusic = FlxG.sound.load("assets/music/title.wav", 1, true);
 		
 		FlxG.camera.fade(0xFF000000, 1.5, true, boom);
+		
+		_gamePad = FlxG.gamepads.lastActive;
+		
 		add(background4);
 		add(background3);
 		add(background2);
@@ -150,14 +157,27 @@ class MenuState extends FlxState
 		super.update();
 		
 		if (canTouch) {
-			
-			if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W)
-				moveCursor( -1);
-			else if (FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S)
-				moveCursor(1);
-			
-			if (FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.Z || FlxG.keys.justPressed.X || FlxG.keys.justPressed.SPACE)
-				accept();
+			Reg.gamePad = FlxG.gamepads.lastActive;
+			if (Reg.gamePad == null)
+			{
+				if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W)
+					moveCursor();
+				else if (FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S)
+					moveCursor();
+				
+				if (FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.Z || FlxG.keys.justPressed.X || FlxG.keys.justPressed.SPACE)
+					accept();
+			} else {
+				if(canMove) {
+					if (Reg.gamePad.justPressed(XboxButtonID.DPAD_UP) || Reg.gamePad.getYAxis(XboxButtonID.LEFT_ANALOGUE_Y)<=-0.25 || Reg.gamePad.justPressed(XboxButtonID.DPAD_DOWN) || Reg.gamePad.getYAxis(XboxButtonID.LEFT_ANALOGUE_Y)>=0.25)
+						moveCursor();
+				} else if (Reg.gamePad.getYAxis(XboxButtonID.LEFT_ANALOGUE_Y) >= -0.25 && Reg.gamePad.getYAxis(XboxButtonID.LEFT_ANALOGUE_Y) <= 0.25)
+					canMove = true;
+				
+				if (Reg.gamePad.justPressed(XboxButtonID.A) || Reg.gamePad.justPressed(XboxButtonID.X))
+					accept();
+			}
+
 			
 		}		
 		
@@ -175,43 +195,46 @@ class MenuState extends FlxState
 		disclaimer.visible = true;
 		playOn.visible = true;
 		creditsOff.visible = true;
-		exitOff.visible = true;
 		canTouch = true;
 		_gibs.start(true, 5);
 	}
 	
-	private function moveCursor(delta:Int):Void {
-		
+	private function moveCursor():Void {
+		canMove = false;
 		selectSFX.play(true);
-		cursorPosition += delta;
-		if (cursorPosition > 2)
+		
+		if (cursorPosition == 0)
+			cursorPosition = 1;
+		else
 			cursorPosition = 0;
-		else if (cursorPosition < 0)
-			cursorPosition = 2;
 		
 		switch(cursorPosition) {
 			case 0:
 				playOn.visible = true;
 				playOff.visible = false;
-				if (delta == 1){
+				creditsOn.visible = false;
+				creditsOff.visible = true;
+				/*if (delta == 1){
 					exitOn.visible = false;
 					exitOff.visible = true;
 				}
 				else {
 					creditsOn.visible = false;
 					creditsOff.visible = true;
-				}
+				}*/
 			case 1:
 				creditsOn.visible = true;
 				creditsOff.visible = false;
-				if (delta == 1){
+				playOn.visible = false;
+				playOff.visible = true;
+				/*if (delta == 1){
 					playOn.visible = false;
 					playOff.visible = true;
 				}
 				else {
 					exitOn.visible = false;
 					exitOff.visible = true;
-				}
+				}*//*
 			case 2:
 				exitOn.visible = true;
 				exitOff.visible = false;
@@ -222,13 +245,12 @@ class MenuState extends FlxState
 				else {
 					playOn.visible = false;
 					playOff.visible = true;
-				}
+				}*/
 		}
 		
 	}
 	
 	private function accept():Void {
-		
 		FlxG.cameras.flash(0xFFFFFFFF, 0.5);
 		startSFX.play();
 		if(cursorPosition!=2) canTouch = false;
@@ -239,7 +261,6 @@ class MenuState extends FlxState
 			case 1:
 				FlxG.camera.fade(0xFF000000, 1.5, false, toCredits);
 			case 2:
-				FlxG.camera.fade(0xFF000000, 1.5, false, quit);
 				FlxG.camera.fade(0xFF000000, 1.5, false, quit);
 		}
 	}

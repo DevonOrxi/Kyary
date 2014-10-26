@@ -17,7 +17,7 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 	static public var songBar:Float;	
 	static public var barProgress:Float = 0;
 	
-	static public var timeSignature = 4;
+	static public var timeSignature:Int = 4;
 	
 	static public var isBeat:Bool = true;
 	static public var isHalfBeat:Bool = true;
@@ -30,6 +30,17 @@ class TimeMaster	//	Apprentice! Heartborne! Seventh Seeker!
 	static public var song:FlxSound;
 
 	static public function init() {
+		
+		bpm = 165;
+		currentBar = 0;
+		barProgress = 0;
+		timeSignature = 4;
+		isBeat = true;
+		isHalfBeat = true;
+		checker = false;
+		currentBeat = 1;
+		currentHalfBeat = 1;
+		beatScale = 1;
 		
 		beatTime = /*1454.54 / timeSignature;*/	1 / (bpm / 60) * 1000;
 		barTime = timeSignature * beatTime + 0.000151171579;

@@ -4,8 +4,6 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.system.FlxSound;
-import flixel.input.gamepad.FlxGamepad;
-import flixel.input.gamepad.XboxButtonID;
 
 /**
  * ...
@@ -32,19 +30,10 @@ class CreditState extends FlxState
 	override public function update():Void {
 		super.update();
 		
-		if (Reg.gamePad == null) {
-			if (touch && FlxG.keys.anyJustPressed(["W", "S", "A", "D", "LEFT", "RIGHT", "UP", "DOWN", "Z", "SHIFT", "ENTER", "SPACE", "X"])) {
-				touch = false;
-				FlxG.camera.fade(0xFF000000, 1.5, false, goToMenu);
-			}
+		if (touch && FlxG.keys.anyJustPressed(["W", "S", "A", "D", "LEFT", "RIGHT", "UP", "DOWN", "Z", "SHIFT", "ENTER", "SPACE", "X"])) {
+			touch = false;
+			FlxG.camera.fade(0xFF000000, 1.5, false, goToMenu);
 		}
-		else {
-			if (touch && (Reg.gamePad.justPressed(XboxButtonID.A) || Reg.gamePad.justPressed(XboxButtonID.X) || Reg.gamePad.justPressed(XboxButtonID.B))) {
-				touch = false;
-				FlxG.camera.fade(0xFF000000, 1.5, false, goToMenu);
-			}
-		}
-
 	}
 	
 	private function canTouch():Void {

@@ -43,17 +43,15 @@ class Enemy extends FlxSprite
 		
 		loadGraphic("assets/images/boxx_nb.png");
 		
-		/*width = 104;
-		height = 118;
-		origin.x = -12;
-		origin.y = -4;
-		offset.x = 12;
-		offset.y = 4;*/
+		width = 190;
+		height = 155;
+		centerOffsets();
+		centerOrigin();
 		
 		health = GC.enemyMaxHealth;
-		shootingPoint = FlxPoint.weak(74, height / 2);
+		shootingPoint = FlxPoint.weak(45, height / 2);
 		
-		x = 660;
+		x = 800;
 		y = (FlxG.height - height) / 2;
 		
 		bulletGroup = new FlxTypedGroup<Bullet>();
@@ -109,7 +107,7 @@ class Enemy extends FlxSprite
 				case "null":
 					p.x = x;
 				default:
-					p.x = Std.parseFloat(m.x)  - width / 2;
+					p.x = Std.parseFloat(m.x);
 			}
 			switch(m.y) {
 				case "center":

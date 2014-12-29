@@ -197,6 +197,9 @@ class PlayState extends FlxState
 		
 		super.update();
 		
+		if (FlxG.keys.justPressed.R)
+			trace("x=" + enemy.x + " | y=" + enemy.y + " | ox=" + enemy.origin.x + " | oy=" + enemy.origin.y + " | ofx=" + enemy.offset.x + " | ofy=" + enemy.offset.y);
+		
 		if (!win)
 		{
 			if (player.alive == false)
@@ -204,7 +207,7 @@ class PlayState extends FlxState
 				player.deathCounter += FlxG.elapsed;
 				if (player.deathCounter >= GC.playerDeathCounter)
 				{
-					if (player.health >= 0) {
+					if (player.health > 0) {
 						playerTrail.revive();
 						player.x = -150;
 						player.y = (FlxG.height - player.height) / 2;
@@ -281,7 +284,10 @@ class PlayState extends FlxState
 			
 		//	Player overlap
 		if (!player.isGod)
+		{
 			FlxG.overlap(player.heart, enemy.bulletGroup, damagePlayer);
+			FlxG.overlap(player.heart, enemy, damagePlayer);
+		}
 		
 	}
 	
@@ -309,18 +315,20 @@ class PlayState extends FlxState
 	
 	//	Handles player damaging
 	private function damagePlayer(h:FlxSprite, b:Bullet):Void {
+		h.kill();
+		h.visible = false;
 		player.isGod = true;
 		player.canPlay = false;
 		playerExplosion.x = h.x + h.width / 2;
 		playerExplosion.y = h.y + h.height / 2;
 		playerExplosion.start(true, 2, 0, 400);
 		player.hurtSFX.play();
+		FlxG.cameras.flash(0xBBFFFFFF, 1);
+		FlxG.cameras.shake(0.015, 0.2);
 		
 		enemy.bulletGroup.remove(b);
 		
 		FlxTween.color(player, 0.25*TimeMaster.beatTime / 1000, 0xFFFFFF, 0xFFFFFF, 1, 0, { type: FlxTween.ONESHOT, complete: playerVanished } );
-		
-		h.kill();
 	}
 	
 	private function playerVanished(tween:FlxTween):Void {
@@ -336,7 +344,7 @@ class PlayState extends FlxState
 	private function beginGame():Void {
 		FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
 		player.flySFX.play();
-		FlxTween.linearMotion(enemy, enemy.x, enemy.y, 380, enemy.y, 2, true, { type:FlxTween.ONESHOT, ease:FlxEase.sineOut } );
+		FlxTween.linearMotion(enemy, enemy.x, enemy.y, 425, enemy.y, 2, true, { type:FlxTween.ONESHOT, ease:FlxEase.sineOut } );
 	}
 
 	private function startFight(tween:FlxTween):Void {

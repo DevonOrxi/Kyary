@@ -1,7 +1,6 @@
 package;
 
 import flixel.util.FlxSave;
-import flixel.input.gamepad.FlxGamepad;
 
 /**
  * Handy, pre-built Registry class that can be used to store 
@@ -35,6 +34,4 @@ class Reg
 	 * Especially useful for setting up multiple save slots.
 	 */
 	public static var saves:Array<FlxSave> = [];
-	
-	public static var gamePad:FlxGamepad = null;
 }

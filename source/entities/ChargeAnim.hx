@@ -19,9 +19,9 @@ class ChargeAnim extends FlxSprite
 		kill();
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
 		if (animation.finished)
 			kill();

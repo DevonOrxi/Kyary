@@ -2,11 +2,12 @@ package entities;
 
 import flixel.FlxSprite;
 import flixel.FlxG;
-import flixel.group.FlxTypedGroup;
-import flixel.util.loaders.TexturePackerData;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.tweens.FlxTween;
 import flixel.system.FlxSound;
 import managers.TimeMaster;
+import openfl.Assets;
 
 /**
  * ...
@@ -33,7 +34,7 @@ class Player extends FlxSprite
 		shootSFX = FlxG.sound.load("assets/sounds/shoot.wav", 1, false);
 		flySFX = FlxG.sound.load("assets/sounds/fly.wav", 1, false);
 		
-		var tex:TexturePackerData = new TexturePackerData("assets/data/kyary.json", "assets/images/kyary.png");
+		var tex:FlxAtlasFrames =  FlxAtlasFrames.fromTexturePackerJson("assets/images/kyary.png", Assets.getText("assets/data/kyary.json"));
 		loadGraphicFromTexture(tex);
 		var names:Array<String> = new Array<String>();
 		for (i in 0...6)
@@ -42,7 +43,7 @@ class Player extends FlxSprite
 		animation.play("idle");
 		
 		shotAnim = new FlxSprite(30, 18);
-		tex = new TexturePackerData("assets/data/bulletParticle.json", "assets/images/bulletParticle.png");
+		tex = FlxAtlasFrames.fromTexturePackerJson("assets/images/bulletParticle.png", Assets.getText("assets/data/bulletParticle.json"));
 		shotAnim.loadGraphicFromTexture(tex);
 		names = new Array<String>();
 		for (i in 0...6)

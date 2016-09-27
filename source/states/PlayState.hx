@@ -18,12 +18,13 @@ import flixel.util.FlxColor;
 import flixel.ui.FlxBar;
 import flixel.addons.effects.FlxTrail;
 import flixel.tweens.FlxTween;
-import flixel.effects.particles.FlxEmitterExt;
+import flixel.effects.particles.FlxEmitter;
 import flixel.effects.particles.FlxParticle;
 import flixel.tweens.FlxEase;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.effects.FlxFlicker;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
+import flixel.ui.FlxBar.FlxBarFillDirection;
 
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -56,10 +57,12 @@ class PlayState extends FlxState
 	private var enemy:Enemy;
 	private var enemyTrail:FlxTrail;
 	private var playerTrail:FlxTrail;
-	private var playerExplosion:FlxEmitterExt;
+	private var playerExplosion:FlxEmitter;
 	
 	private var data:Xml;
 	private var fastData:Fast;
+	
+	private var randomSeed:FlxRandom;
 	//	private var testText:FlxText;
 	
 	override public function create():Void {
@@ -107,7 +110,7 @@ class PlayState extends FlxState
 		var eb:FlxSprite = new FlxSprite(0, 0, "assets/images/bar_empty.png");
 		
 		//	... then create and set the life bar up.
-		enemyLifeBar = new FlxBar( 375, 333, FlxBar.FILL_LEFT_TO_RIGHT, Math.floor(eb.width), Math.floor(eb.height), enemy, "health");// , 0, GC.enemyMaxHealth);
+		enemyLifeBar = new FlxBar( 375, 333, FlxBarFillDirection.LEFT_TO_RIGHT, Math.floor(eb.width), Math.floor(eb.height), enemy, "health");// , 0, GC.enemyMaxHealth);
 		enemyLifeBar.createImageBar(null, "assets/images/bar_full.png", 0x0);
 		
 		eb.x = enemyLifeBar.x;
@@ -116,10 +119,10 @@ class PlayState extends FlxState
 		enemyID = new FlxSprite(598, 321, "assets/images/enemyID.png");
 		
 		playerID = new FlxSprite(8, 9, "assets/images/playerID.png");
-		playerLifeBar = new FlxBar(47, 17, FlxBar.FILL_LEFT_TO_RIGHT, 69, 17, player, "health", 0, 3);
+		playerLifeBar = new FlxBar(47, 17, FlxBarFillDirection.LEFT_TO_RIGHT, 69, 17, player, "health", 0, 3);
 		playerLifeBar.createImageBar(null, "assets/images/life.png", 0x0);
 		
-		playerExplosion = new FlxEmitterExt();
+		playerExplosion = new FlxEmitter();
 		playerExplosion.setMotion(0, 5, 0.2, 360, 200, 1.8);
 		
 		var tempParticle:FlxParticle;
@@ -150,6 +153,8 @@ class PlayState extends FlxState
 		explosion.loadGraphic("assets/images/explode.png", true, 50, 50);
 		explosion.animation.add("boom", [0, 1, 2], 15, false);
 		explosion.visible = false;
+		
+		randomSeed = new FlxRandom();
 		
 		FlxG.camera.fade(0xFF000000, 1.5, true, beginGame);
 		
@@ -193,9 +198,9 @@ class PlayState extends FlxState
 	}
 	
 	
-	override public function update():Void {
+	override public function update(elapsed:Float):Void {
 		
-		super.update();
+		super.update(elapsed);
 		
 		if (FlxG.keys.justPressed.R)
 			trace("x=" + enemy.x + " | y=" + enemy.y + " | ox=" + enemy.origin.x + " | oy=" + enemy.origin.y + " | ofx=" + enemy.offset.x + " | ofy=" + enemy.offset.y);
@@ -303,8 +308,8 @@ class PlayState extends FlxState
 		{
 			win = true;
 			player.canPlay = false;
-			explosion.x = FlxRandom.floatRanged(enemy.x - explosion.width / 2, enemy.x + enemy.width - explosion.width / 2);
-			explosion.y = FlxRandom.floatRanged(enemy.y - explosion.height / 2, enemy.y + enemy.height - explosion.height / 2);
+			explosion.x = randomSeed.float(enemy.x - explosion.width / 2, enemy.x + enemy.width - explosion.width / 2);
+			explosion.y = randomSeed.float(enemy.y - explosion.height / 2, enemy.y + enemy.height - explosion.height / 2);
 			explosion.visible = true;
 			explosion.animation.play("boom");
 			explosionSFX.play(true);

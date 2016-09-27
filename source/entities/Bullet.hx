@@ -1,8 +1,8 @@
 package entities;
 
 import flixel.FlxSprite;
-import flixel.util.FlxPoint;
-import flixel.util.FlxAngle;
+import flixel.math.FlxPoint;
+import flixel.math.FlxAngle;
 import managers.TimeMaster;
 
 /**
@@ -39,8 +39,8 @@ class Bullet extends FlxSprite
 		//scale.y = 2;
 	}
 	
-	override public function update():Void {
-		super.update();
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
 		
 		if (!isOnScreen())
 			kill();			

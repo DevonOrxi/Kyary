@@ -1,12 +1,12 @@
 package entities;
 
 import flixel.FlxSprite;
-import flixel.group.FlxTypedGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.system.FlxSound;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 import managers.TimeMaster;
 import managers.QueueManager;
@@ -61,9 +61,9 @@ class Enemy extends FlxSprite
 		chargeAnim = new ChargeAnim();
 	}
 	
-	override public function update():Void {
+	override public function update(elapsed:Float):Void {
 		
-		super.update();
+		super.update(elapsed);
 		
 		if (health > 0) {
 			shootQueued();

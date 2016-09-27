@@ -2,35 +2,35 @@
 <project version="2">
   <!-- Output SWF options -->
   <output>
-    <movie outputType="Application" />
+    <movie outputType="CustomBuild" />
     <movie input="" />
     <movie path="Project.xml" />
     <movie fps="60" />
     <movie width="640" />
     <movie height="360" />
-    <movie version="3" />
+    <movie version="1" />
     <movie minorVersion="0" />
-    <movie platform="NME" />
+    <movie platform="Lime" />
     <movie background="000000" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="C:\openfl\flixel\3,3,5" />
-    <class path="C:\openfl\lime\1,0,1" />
-    <class path="C:\openfl\openfl\2,0,1" />
-    <class path="C:\openfl\flixel-addons\1,1,0" />
+    <class path="C:\openfl\flixel\4,0,0" />
+    <class path="C:\openfl\openfl\3,6,0" />
+    <class path="C:\openfl\lime\2,9,0" />
+    <class path="C:\openfl\flixel-addons\2,0,0" />
     <class path="source" />
-    <class path="C:\openfl\openfl\2,0,1\backends\native" />
-    <class path="export\windows\cpp\haxe" />
+    <class path="C:\openfl\openfl\3,6,0\extern" />
+    <class path="export\windows\neko\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="flixel-addons=1.1.0&#xA;openfl=2.0.1&#xA;flixel=3.3.5&#xA;lime=1.0.1&#xA;FLX_NO_MOUSE&#xA;tools=1.5.7&#xA;FLX_NO_DEBUG&#xA;lime_native&#xA;no-compilation&#xA;NAPE_RELEASE_BUILD&#xA;native&#xA;openfl-native&#xA;display&#xA;FLX_RENDER_TILE&#xA;windows&#xA;desktop" />
+    <option directives="flixel=4.0.0&#xA;openfl=3.6.0&#xA;lime=2.9.0&#xA;flixel-addons=2.0.0&#xA;openfl-next&#xA;FLX_NO_MOUSE&#xA;tools=2.9.0&#xA;NAPE_NO_INLINE&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop&#xA;display" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
-    <option additional="--no-output&#xA;--remap flash:openfl&#xA;--macro keep(&quot;Main&quot;)" />
+    <option additional="--remap flash:openfl&#xA;--macro flixel.system.macros.FlxDefines.run()&#xA;#--macro keep(&quot;Main&quot;)&#xA;-debug " />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
@@ -40,16 +40,12 @@
   <compileTargets>
     <compile path="source\GameClass.hx" />
   </compileTargets>
-  <!-- Assets to embed into the output SWF -->
-  <library>
-    <!-- example: <asset path="..." id="..." update="..." glyphs="..." mode="..." place="..." sharepoint="..." /> -->
-  </library>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
     <hidden path="obj" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand />
+  <preBuildCommand>"$(CompilerPath)/haxelib" run lime build "$(OutputFile)" $(TargetBuild) -$(BuildConfig) -Dfdb</preBuildCommand>
   <!-- Executed after build -->
   <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->

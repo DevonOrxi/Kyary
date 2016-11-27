@@ -27,8 +27,8 @@ class CreditState extends FlxState
 		FlxG.camera.fade(0xFF000000, 1.5, true, canTouch);
 	}
 	
-	override public function update():Void {
-		super.update();
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
 		
 		if (touch && FlxG.keys.anyJustPressed(["W", "S", "A", "D", "LEFT", "RIGHT", "UP", "DOWN", "Z", "SHIFT", "ENTER", "SPACE", "X"])) {
 			touch = false;

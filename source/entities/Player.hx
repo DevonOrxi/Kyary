@@ -34,8 +34,7 @@ class Player extends FlxSprite
 		shootSFX = FlxG.sound.load("assets/sounds/shoot.wav", 1, false);
 		flySFX = FlxG.sound.load("assets/sounds/fly.wav", 1, false);
 		
-		var tex:FlxAtlasFrames =  FlxAtlasFrames.fromTexturePackerJson("assets/images/kyary.png", Assets.getText("assets/data/kyary.json"));
-		loadGraphicFromTexture(tex);
+		frames =  FlxAtlasFrames.fromTexturePackerJson("assets/images/kyary.png", Assets.getText("assets/data/kyary.json"));
 		var names:Array<String> = new Array<String>();
 		for (i in 0...6)
 			names.push("kyary_" + i + ".png");
@@ -43,8 +42,7 @@ class Player extends FlxSprite
 		animation.play("idle");
 		
 		shotAnim = new FlxSprite(30, 18);
-		tex = FlxAtlasFrames.fromTexturePackerJson("assets/images/bulletParticle.png", Assets.getText("assets/data/bulletParticle.json"));
-		shotAnim.loadGraphicFromTexture(tex);
+		shotAnim.frames = FlxAtlasFrames.fromTexturePackerJson("assets/images/bulletParticle.png", Assets.getText("assets/data/bulletParticle.json"));
 		names = new Array<String>();
 		for (i in 0...6)
 			names.push("bulletParticle_" + i + ".png");
@@ -52,7 +50,7 @@ class Player extends FlxSprite
 		shotAnim.visible = false;
 		
 		heart = new FlxSprite(8, 16, "assets/images/heart2.png");
-		FlxTween.color(heart, TimeMaster.beatTime / 1000, 0xFFFFFF, 0xFFFFFF, 1, 0.4, { type: FlxTween.PINGPONG } );
+		FlxTween.color(heart, TimeMaster.beatTime / 1000, 0xFFFFFF, 0xFFFFFF, { type: FlxTween.PINGPONG } );
 		heart.visible = false;
 		heart.width = 8;
 		heart.height = 10;
@@ -75,8 +73,8 @@ class Player extends FlxSprite
 		bulletGroup = new FlxTypedGroup<Bullet>();
 	}
 	
-	override public function update():Void {
-		super.update();
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
 		
 		if (canPlay)
 		{

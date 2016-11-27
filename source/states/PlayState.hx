@@ -122,8 +122,9 @@ class PlayState extends FlxState
 		playerLifeBar = new FlxBar(47, 17, FlxBarFillDirection.LEFT_TO_RIGHT, 69, 17, player, "health", 0, 3);
 		playerLifeBar.createImageBar(null, "assets/images/life.png", 0x0);
 		
-		playerExplosion = new FlxEmitter();
-		playerExplosion.setMotion(0, 5, 0.2, 360, 200, 1.8);
+		playerExplosion = new FlxEmitter();		
+		
+		//playerExplosion.setMotion(0, 5, 0.2, 360, 200, 1.8);
 		
 		var tempParticle:FlxParticle;
 		for (i in 0...30) {
@@ -143,6 +144,9 @@ class PlayState extends FlxState
 			tempParticle.makeGraphic(2, 2, 0xDDFFFFFF);
 			playerExplosion.add(tempParticle);
 		}
+		playerExplosion.lifespan.set(0.2, 1.8);
+		playerExplosion.velocity.set(-200, -200, 200, 200);
+		playerExplosion.start();
 		
 		
 		//	Trail effect for the boss
@@ -219,7 +223,7 @@ class PlayState extends FlxState
 						player.revive();
 						player.heart.revive();
 						player.alpha = 1;
-						FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
+						FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, onComplete: startFight } );
 						player.flySFX.play();
 						FlxFlicker.flicker(player, TimeMaster.beatTime * 12 / 1000, 0.04, true, false, notGodAnymore);
 					}
@@ -249,8 +253,8 @@ class PlayState extends FlxState
 				FlxG.camera.fade(0xFFFFFFFF, 4, false, goToCredits);
 			
 			if(explosion.animation.finished) {
-				explosion.x = FlxRandom.floatRanged(enemy.x - explosion.width / 2, enemy.x + enemy.width - explosion.width / 2);
-				explosion.y = FlxRandom.floatRanged(enemy.y - explosion.height / 2, enemy.y + enemy.height - explosion.height / 2);
+				explosion.x = Reg.random.float(enemy.x - explosion.width / 2, enemy.x + enemy.width - explosion.width / 2);
+				explosion.y = Reg.random.float(enemy.y - explosion.height / 2, enemy.y + enemy.height - explosion.height / 2);
 				explosion.animation.play("boom");
 				explosionSFX.play(true);
 			}
@@ -326,14 +330,14 @@ class PlayState extends FlxState
 		player.canPlay = false;
 		playerExplosion.x = h.x + h.width / 2;
 		playerExplosion.y = h.y + h.height / 2;
-		playerExplosion.start(true, 2, 0, 400);
+		playerExplosion.start();
 		player.hurtSFX.play();
 		FlxG.cameras.flash(0xBBFFFFFF, 1);
 		FlxG.cameras.shake(0.015, 0.2);
 		
 		enemy.bulletGroup.remove(b);
 		
-		FlxTween.color(player, 0.25*TimeMaster.beatTime / 1000, 0xFFFFFF, 0xFFFFFF, 1, 0, { type: FlxTween.ONESHOT, complete: playerVanished } );
+		FlxTween.color(player, 0.25*TimeMaster.beatTime / 1000, 0xFFFFFFFF, 0x00FFFFFF, { type: FlxTween.ONESHOT, onComplete: playerVanished } );
 	}
 	
 	private function playerVanished(tween:FlxTween):Void {
@@ -347,7 +351,7 @@ class PlayState extends FlxState
 	}
 	
 	private function beginGame():Void {
-		FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, complete: startFight } );
+		FlxTween.cubicMotion(player, player.x, player.y, 200, 200, 50, 0, 25, player.y, 2, { ease: FlxEase.backOut, onComplete: startFight } );
 		player.flySFX.play();
 		FlxTween.linearMotion(enemy, enemy.x, enemy.y, 425, enemy.y, 2, true, { type:FlxTween.ONESHOT, ease:FlxEase.sineOut } );
 	}

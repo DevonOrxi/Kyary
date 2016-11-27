@@ -93,9 +93,9 @@ class MenuState extends FlxState
 		
 		_gibs = new FlxEmitter();
 		_gibs.setSize(Std.int(title.width), Std.int(title.height));
-		_gibs.setYSpeed(-200, -20);
-		_gibs.setRotation( -720, 720);
-		_gibs.gravity = 100;
+		_gibs.velocity.set(0, -200, 0, -20);
+		_gibs.angularVelocity.set( -720, 720);
+		_gibs.acceleration.set(0, 100);
 		_gibs.x = title.x;
 		_gibs.y = title.y;
 		
@@ -145,9 +145,8 @@ class MenuState extends FlxState
 	/**
 	 * Function that is called once every frame.
 	 */
-	override public function update():Void
-	{
-		super.update();
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
 		
 		if (canTouch) {
 			
